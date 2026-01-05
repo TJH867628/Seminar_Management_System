@@ -1,11 +1,32 @@
 package model;
 
-public class User {
-    protected String username;
+public abstract class User{
+
+    protected int userID;
+    protected String email;
+    protected String name;
     protected String role;
 
-    public User(String username, String role) {
-        this.username = username;
+    public User(int userID, String email, String name, String role) {
+        this.userID = userID;
+        this.email = email;
+        this.name = name;
         this.role = role;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

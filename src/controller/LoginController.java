@@ -3,9 +3,9 @@ package controller;
 import model.*;
 import dao.UserDAO;
 import javax.swing.JFrame;
-import view.student.StudentDashboard;
 import util.PasswordUtil;
 import util.EmailUtil;
+import app.AppNavigator;
 
 public class LoginController {
 
@@ -23,9 +23,8 @@ public class LoginController {
 
         String hashedPassword = PasswordUtil.hashPassword(password);
 
-        String role = UserDAO.validateUser(email, hashedPassword);
-        System.out.println("Login role: " + role);
-        if(role == null || role.equals("invalid"))
+        User user = UserDAO.validateUser(email, hashedPassword);
+        if(user.getRole() == null || user.getRole().equals("invalid"))
         {
             javax.swing.JOptionPane.showMessageDialog(parentFrame,
                     "Invalid email or password",
@@ -35,18 +34,7 @@ public class LoginController {
         }
 
         parentFrame.dispose();
-
-        switch(role) {
-            case "Student":
-                // return new Student(email);
-                new StudentDashboard();
-            case "Evaluator":
-                // return new Evaluator(email);
-            case "Coordinator":
-                // return new Coordinator(email);
-            default:
-                return;
-        }
+        AppNavigator.openDashboard(user);
         
     }
 }

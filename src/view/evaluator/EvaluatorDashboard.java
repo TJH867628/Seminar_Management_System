@@ -1,30 +1,28 @@
-package view.student;
+package view.evaluator;
 
 import javax.swing.*;
-import app.AppNavigator;
 import java.awt.*;
-import model.Student;
 
-public class StudentDashboard extends JFrame {
+import app.AppNavigator;
+import model.Evaluator;
 
-    public StudentDashboard(Student student) {
-
-        setTitle("Student Dashboard");
+public class EvaluatorDashboard extends JFrame {
+    public EvaluatorDashboard(Evaluator evaluator) {
+        setTitle("Evaluator Dashboard");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JPanel headerPanel = new JPanel(new GridLayout(3, 1));
 
-        JLabel lblTitle = new JLabel("Student Dashboard", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Evaluator Dashboard", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 18));
-        JLabel lblName = new JLabel("Welcome, " + student.getName(), SwingConstants.CENTER);
+        JLabel lblName = new JLabel("Welcome, " + evaluator.getName(), SwingConstants.CENTER);
         lblName.setFont(new Font("Arial", Font.PLAIN, 14));
-        JLabel lblProgram = new JLabel("Program: " + student.getProgram(), SwingConstants.CENTER);
-        lblProgram.setFont(new Font("Arial", Font.PLAIN, 14));
+        JLabel lblDepartment = new JLabel("Expertise: " + evaluator.getExpertise(), SwingConstants.CENTER);
+        lblDepartment.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton btnSubmission = new JButton("Create / Update Submission");
-        JButton btnStatus = new JButton("View Submission Status");
+        JButton btnReviewAssignPresentation = new JButton("Review Assigned Presentation");
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
@@ -32,14 +30,13 @@ public class StudentDashboard extends JFrame {
 
         JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-        panel.add(btnSubmission);
-        panel.add(btnStatus);
+        panel.add(btnReviewAssignPresentation);
         panel.add(btnLogout);
 
         setLayout(new BorderLayout());
         headerPanel.add(lblTitle);
         headerPanel.add(lblName);
-        headerPanel.add(lblProgram);
+        headerPanel.add(lblDepartment);
         add(headerPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
 
