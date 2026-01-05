@@ -11,7 +11,7 @@
  Target Server Version : 90200 (9.2.0)
  File Encoding         : 65001
 
- Date: 06/01/2026 03:30:32
+ Date: 06/01/2026 03:51:44
 */
 
 SET NAMES utf8mb4;
@@ -20,7 +20,6 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for coordinators
 -- ----------------------------
-DROP TABLE IF EXISTS `coordinators`;
 CREATE TABLE `coordinators` (
   `id` int NOT NULL,
   `department` varchar(255) DEFAULT NULL,
@@ -42,7 +41,6 @@ COMMIT;
 -- ----------------------------
 -- Table structure for evaluators
 -- ----------------------------
-DROP TABLE IF EXISTS `evaluators`;
 CREATE TABLE `evaluators` (
   `id` int NOT NULL,
   `expertise` varchar(255) DEFAULT NULL,
@@ -64,7 +62,6 @@ COMMIT;
 -- ----------------------------
 -- Table structure for sessions
 -- ----------------------------
-DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
   `sessionID` int NOT NULL,
   `date` datetime DEFAULT NULL,
@@ -85,7 +82,6 @@ COMMIT;
 -- ----------------------------
 -- Table structure for students
 -- ----------------------------
-DROP TABLE IF EXISTS `students`;
 CREATE TABLE `students` (
   `studentID` int NOT NULL,
   `program` varchar(255) DEFAULT NULL,
@@ -108,7 +104,6 @@ COMMIT;
 -- ----------------------------
 -- Table structure for submissions
 -- ----------------------------
-DROP TABLE IF EXISTS `submissions`;
 CREATE TABLE `submissions` (
   `submissionID` int NOT NULL,
   `userID` int DEFAULT NULL,
@@ -133,7 +128,6 @@ COMMIT;
 -- ----------------------------
 -- Table structure for users
 -- ----------------------------
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int NOT NULL,
   `name` varchar(255) DEFAULT NULL,
