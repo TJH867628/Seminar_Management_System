@@ -1,3 +1,10 @@
+User Account/Password
+student@mail.com test
+evaluator@mail.com test
+coordinator@mail.com test
+
+test
+
 📌 Prebuilt Core Functions
 
 🔐 Authentication & Session
