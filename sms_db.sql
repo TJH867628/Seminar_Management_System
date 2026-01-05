@@ -18,6 +18,30 @@ SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
+-- Table structure for users
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `userID` int NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `role` varchar(255) DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`userID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+BEGIN;
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (1, 'Yan Lu', 'student@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Student', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (2, 'Lili', 'evaluator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Evaluator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (3, 'Adam', 'coordinator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Coordinator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+COMMIT;
+
+-- ----------------------------
 -- Table structure for coordinators
 -- ----------------------------
 DROP TABLE IF EXISTS `coordinators`;
@@ -128,30 +152,6 @@ CREATE TABLE `submissions` (
 -- Records of submissions
 -- ----------------------------
 BEGIN;
-COMMIT;
-
--- ----------------------------
--- Table structure for users
--- ----------------------------
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE `users` (
-  `userID` int NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `role` varchar(255) DEFAULT NULL,
-  `createdAt` datetime DEFAULT NULL,
-  `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`userID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- ----------------------------
--- Records of users
--- ----------------------------
-BEGIN;
-INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (1, 'Yan Lu', 'student@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Student', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
-INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (2, 'Lili', 'evaluator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Evaluator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
-INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (3, 'Adam', 'coordinator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Coordinator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
