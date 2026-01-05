@@ -11,7 +11,7 @@
  Target Server Version : 90200 (9.2.0)
  File Encoding         : 65001
 
- Date: 05/01/2026 10:48:33
+ Date: 06/01/2026 02:56:22
 */
 
 SET NAMES utf8mb4;
@@ -36,6 +36,7 @@ CREATE TABLE `coordinators` (
 -- Records of coordinators
 -- ----------------------------
 BEGIN;
+INSERT INTO `coordinators` (`coordinatorID`, `department`, `createdAt`, `updatedAt`, `userID`) VALUES (1, 'FCI', 'wQwtbvXFEh', '2012-06-15 05:05:38', 3);
 COMMIT;
 
 -- ----------------------------
@@ -57,6 +58,7 @@ CREATE TABLE `evaluators` (
 -- Records of evaluators
 -- ----------------------------
 BEGIN;
+INSERT INTO `evaluators` (`evaluatorID`, `expertise`, `createdAt`, `updatedAt`, `userID`) VALUES (1, 'Math', '2015-08-29 00:12:24', '2015-06-15 02:08:32', 2);
 COMMIT;
 
 -- ----------------------------
@@ -100,6 +102,7 @@ CREATE TABLE `students` (
 -- Records of students
 -- ----------------------------
 BEGIN;
+INSERT INTO `students` (`studentID`, `program`, `year`, `userID`, `createdAt`, `updatedAt`) VALUES (1, 'FCI', 2025, 1, '2015-12-31 22:37:50', '2007-06-28 15:39:51');
 COMMIT;
 
 -- ----------------------------
@@ -146,7 +149,9 @@ CREATE TABLE `users` (
 -- Records of users
 -- ----------------------------
 BEGIN;
-INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (1, 'Yan Lu', 'test@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Student', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (1, 'Yan Lu', 'student@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Student', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (2, 'Lili', 'evaluator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Evaluator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
+INSERT INTO `users` (`userID`, `name`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES (3, 'Adam', 'coordinator@mail.com', 'ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff', 'Coordinator', '2005-02-04 23:31:27', '2015-11-24 04:23:47');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
