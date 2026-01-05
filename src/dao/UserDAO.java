@@ -22,7 +22,7 @@ public class UserDAO {
                 return null;
             }
 
-            int id = rs.getInt("userID");
+            int id = rs.getInt("id");
             String name = rs.getString("name");
             String role = rs.getString("role");
 
