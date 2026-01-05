@@ -22,7 +22,11 @@ public class EvaluatorDashboard extends JFrame {
         JLabel lblDepartment = new JLabel("Expertise: " + evaluator.getExpertise(), SwingConstants.CENTER);
         lblDepartment.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton btnReviewAssignPresentation = new JButton("Review Assigned Presentation");
+        JButton btnAssignEvaluations = new JButton("Assigned Evaluations");
+        btnAssignEvaluations.addActionListener(e -> {
+            AppNavigator.openAssignedEvaluations(this, evaluator);
+        });
+
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
@@ -30,7 +34,7 @@ public class EvaluatorDashboard extends JFrame {
 
         JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
-        panel.add(btnReviewAssignPresentation);
+        panel.add(btnAssignEvaluations);
         panel.add(btnLogout);
 
         setLayout(new BorderLayout());

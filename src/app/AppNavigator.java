@@ -23,6 +23,11 @@ public class AppNavigator {
         }
     }
 
+    public static void openAssignedEvaluations(JFrame frame, Evaluator evaluator) {
+        frame.dispose();
+        new AssignedEvaluationsFrame(evaluator);
+    }
+
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();
