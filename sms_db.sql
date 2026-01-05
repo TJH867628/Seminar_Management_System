@@ -11,17 +11,11 @@
  Target Server Version : 90200 (9.2.0)
  File Encoding         : 65001
 
- Date: 06/01/2026 03:57:56
+ Date: 06/01/2026 04:04:22
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Records of submissions
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for users
@@ -96,14 +90,14 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
-  `sessionID` int NOT NULL,
+  `id` int NOT NULL,
   `date` datetime DEFAULT NULL,
   `venue` varchar(255) DEFAULT NULL,
   `sessionType` varchar(255) DEFAULT NULL,
   `timeSlot` datetime DEFAULT NULL,
   `createdAt` varchar(255) DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`sessionID`)
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
@@ -117,22 +111,22 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `students`;
 CREATE TABLE `students` (
-  `studentID` int NOT NULL,
+  `id` int NOT NULL,
   `program` varchar(255) DEFAULT NULL,
   `year` int DEFAULT NULL,
   `userID` int DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`studentID`),
-  KEY `userID` (`userID`),
-  CONSTRAINT `userID` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `userID-students` (`userID`),
+  CONSTRAINT `userID-students` FOREIGN KEY (`userID`) REFERENCES `students` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- ----------------------------
 -- Records of students
 -- ----------------------------
 BEGIN;
-INSERT INTO `students` (`studentID`, `program`, `year`, `userID`, `createdAt`, `updatedAt`) VALUES (1, 'FCI', 2025, 1, '2015-12-31 22:37:50', '2007-06-28 15:39:51');
+INSERT INTO `students` (`id`, `program`, `year`, `userID`, `createdAt`, `updatedAt`) VALUES (1, 'FCI', 2025, 1, '2015-12-31 22:37:50', '2007-06-28 15:39:51');
 COMMIT;
 
 -- ----------------------------
@@ -153,6 +147,13 @@ CREATE TABLE `submissions` (
   KEY `userID-submission` (`userID`),
   CONSTRAINT `userID-submission` FOREIGN KEY (`userID`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of submissions
+-- ----------------------------
+BEGIN;
+COMMIT;
+
 
 
 SET FOREIGN_KEY_CHECKS = 1;
