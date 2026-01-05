@@ -37,7 +37,7 @@ public class LoginController {
 
         parentFrame.dispose();
 
-        Session.setCurrentUser(user);
+        UserSession.setCurrentUser(user);
         AppNavigator.openDashboard(user);
         
     }

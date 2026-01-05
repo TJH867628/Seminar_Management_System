@@ -25,7 +25,7 @@ public class AppNavigator {
 
     public static void logout(JFrame frame) {
         frame.dispose();
-        Session.clearSession();
+        UserSession.clearSession();
         new LoginFrame();
     }
 }

@@ -2,7 +2,7 @@ package app;
 
 import model.User;
 
-public class Session {
+public class UserSession {
     private static User currentUser;
 
     public static User getCurrentUser() {
