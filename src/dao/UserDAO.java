@@ -43,7 +43,7 @@ public class UserDAO {
                     break;
 
                 case "Evaluator":
-                    String evaluatorSql = "SELECT evaluatorID, expertise FROM evaluators WHERE userID = ?";
+                    String evaluatorSql = "SELECT id, expertise FROM evaluators WHERE userID = ?";
 
                     try (PreparedStatement evaluatorStmt = conn.prepareStatement(evaluatorSql)){
                         evaluatorStmt.setInt(1, id);
@@ -57,7 +57,7 @@ public class UserDAO {
 
                     break;
                 case "Coordinator":
-                    String coordinatorSql = "SELECT coordinatorID, department FROM coordinators WHERE userID = ?";
+                    String coordinatorSql = "SELECT id, department FROM coordinators WHERE userID = ?";
 
                     try(PreparedStatement coordinatorStmt = conn.prepareStatement(coordinatorSql)){
                         coordinatorStmt.setInt(1,id);
