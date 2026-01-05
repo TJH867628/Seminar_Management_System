@@ -49,7 +49,7 @@ public class UserDAO {
                         evaluatorStmt.setInt(1, id);
                         ResultSet evaluatorRs = evaluatorStmt.executeQuery();
                         if (evaluatorRs.next()) {
-                            int evaluatorID = evaluatorRs.getInt("evaluatorID");
+                            int evaluatorID = evaluatorRs.getInt("id");
                             String expertise = evaluatorRs.getString("expertise");
                             return new Evaluator(id, email, name, evaluatorID, expertise);
                         }
@@ -64,7 +64,7 @@ public class UserDAO {
 
                         ResultSet coordinatorRs = coordinatorStmt.executeQuery();
                         if(coordinatorRs.next()){
-                            int coordinatorID = coordinatorRs.getInt("coordinatorID");
+                            int coordinatorID = coordinatorRs.getInt("id");
                             String department = coordinatorRs.getString("department");
                             return new Coordinator(id, email, name, coordinatorID, department);
                         }
