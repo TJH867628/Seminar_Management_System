@@ -1,107 +1,90 @@
 package view.evaluator;
 
+import controller.EvaluatorController;
 import model.AssignedEvaluation;
 import model.Evaluator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-
-import dao.EvaluatorDAO;
-
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AssignedEvaluationsFrame extends JFrame {
 
     private Evaluator evaluator;
+    private EvaluatorController controller;
+
     private JTable table;
     private DefaultTableModel model;
     private List<AssignedEvaluation> assignedList;
 
     public AssignedEvaluationsFrame(Evaluator evaluator) {
         this.evaluator = evaluator;
+        this.controller = new EvaluatorController(evaluator);
 
         setTitle("Assigned Evaluations");
-        setSize(800, 400);
+        setSize(1000, 400);
         setLocationRelativeTo(null);
 
-        assignedList = loadAssignedEvaluations();
-
-        String[] columns = {"Student", "Session", "Date", "Venue", "File", "Status"};
+        String[] columns = {"Submission ID", "Student", "Session", "Date", "Venue", "File", "Total Score", "Status"};
         model = new DefaultTableModel(columns, 0);
         table = new JTable(model);
         table.setRowHeight(30);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        for (AssignedEvaluation ae : assignedList) {
-            model.addRow(ae.toRow());
-        }
+        loadTable();
 
-        // 🔹 Button column setup
         table.getColumn("File").setCellRenderer(new FileButtonRenderer());
-        table.getColumn("File").setCellEditor(
-            new FileButtonEditor(new JCheckBox(), assignedList)
-        );
+        table.getColumn("File").setCellEditor(new FileButtonEditor(new JCheckBox()));
 
         JButton evaluateBtn = new JButton("Evaluate");
         JButton refreshBtn = new JButton("Refresh");
-        JButton closeBtn = new JButton("Close");
+        JButton backBtn = new JButton("Back");
 
         evaluateBtn.addActionListener(e -> openEvaluation());
-        refreshBtn.addActionListener(e -> refreshTable());
-        closeBtn.addActionListener(e -> back());
+        refreshBtn.addActionListener(e -> loadTable());
+        backBtn.addActionListener(e -> back());
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.add(evaluateBtn);
-        bottomPanel.add(refreshBtn);
-        bottomPanel.add(closeBtn);
+        JPanel bottom = new JPanel();
+        bottom.add(evaluateBtn);
+        bottom.add(refreshBtn);
+        bottom.add(backBtn);
 
         add(new JScrollPane(table), BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
+        add(bottom, BorderLayout.SOUTH);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
 
-    private void openEvaluation() {
-        int row = table.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Please select an evaluation.");
-            return;
-        }
-
-        new EvaluationForm(); // your existing EvaluationForm
-        dispose();
-    }
-
-    private void refreshTable() {
+    private void loadTable() {
         model.setRowCount(0);
-        assignedList = loadAssignedEvaluations();
+        assignedList = controller.getAssignedEvaluations();
+
         for (AssignedEvaluation ae : assignedList) {
             model.addRow(ae.toRow());
         }
     }
 
+    private void openEvaluation() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a row.");
+            return;
+        }
+
+        controller.openEvaluationForm(this, assignedList.get(row));
+        dispose();
+    }
+
     private void back() {
-        new EvaluatorDashboard(evaluator);
-        dispose(); // close current window
+        controller.backToDashboard();
+        dispose();
     }
 
-    // Dummy data (replace with DB later)
-    private List<AssignedEvaluation> loadAssignedEvaluations() {
-        EvaluatorDAO dao = new EvaluatorDAO();
-        return dao.getAssignedEvaluations(evaluator.getUserID());
-    }
-
-    // ===============================
-    // BUTTON RENDERER
-    // ===============================
     class FileButtonRenderer extends JButton implements TableCellRenderer {
-
         public FileButtonRenderer() {
             setText("Open File");
         }
@@ -114,29 +97,26 @@ public class AssignedEvaluationsFrame extends JFrame {
         }
     }
 
-    // ===============================
-    // BUTTON EDITOR
-    // ===============================
     class FileButtonEditor extends DefaultCellEditor {
 
         private JButton button;
-        private AssignedEvaluation currentEval;
+        private AssignedEvaluation current;
 
-        public FileButtonEditor(JCheckBox checkBox, List<AssignedEvaluation> list) {
-            super(checkBox);
+        public FileButtonEditor(JCheckBox box) {
+            super(box);
             button = new JButton("Open File");
 
             button.addActionListener(e -> {
                 try {
-                    if (currentEval != null) {
-                        Desktop.getDesktop().open(new File(currentEval.getFilePath()));
+                    if (current != null) {
+                        Desktop.getDesktop().open(new File(current.getFilePath()));
                     }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(
-                            null,
-                            "Cannot open file.\nPlease check file path.",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE
+                        AssignedEvaluationsFrame.this,
+                        "Cannot open file.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
                     );
                 }
             });
@@ -146,8 +126,7 @@ public class AssignedEvaluationsFrame extends JFrame {
         public Component getTableCellEditorComponent(
                 JTable table, Object value, boolean isSelected,
                 int row, int column) {
-
-            currentEval = assignedList.get(row);
+            current = assignedList.get(row);
             return button;
         }
     }

@@ -27,7 +27,7 @@ public class LoginController {
         String hashedPassword = PasswordUtil.hashPassword(password);
 
         User user = UserDAO.validateUser(email, hashedPassword);
-        if(user.getRole() == null || user.getRole().equals("invalid"))
+        if(user == null || user.getRole() == null || user.getRole().equals("invalid"))
         {
             DialogUtil.showErrorDialog(parentFrame,
                     "Login Failed",

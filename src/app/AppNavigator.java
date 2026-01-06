@@ -28,6 +28,11 @@ public class AppNavigator {
         new AssignedEvaluationsFrame(evaluator);
     }
 
+    public static void openEvaluationForm(JFrame frame, AssignedEvaluation assignedEvaluation, Evaluator evaluator) {
+        frame.dispose();
+        new EvaluationForm(assignedEvaluation, evaluator);
+    }
+
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();

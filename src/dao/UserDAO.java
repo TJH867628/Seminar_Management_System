@@ -28,7 +28,7 @@ public class UserDAO {
 
             switch(role) {
                 case "Student":
-                    String studentSql = "SELECT program, year FROM students WHERE userID = ?";
+                    String studentSql = "SELECT program, year, sessionID FROM students WHERE userID = ?";
 
                     try (PreparedStatement studentStmt = conn.prepareStatement(studentSql)){
                         studentStmt.setInt(1, id);
@@ -36,7 +36,8 @@ public class UserDAO {
                         if (studentRs.next()) {
                             String program = studentRs.getString("program");
                             int year = studentRs.getInt("year");
-                            return new Student(id, email, name, program, year);
+                            int sessionID = studentRs.getInt("sessionID");
+                            return new Student(id, email, name, program, year, sessionID);
                         }
                     }
 
