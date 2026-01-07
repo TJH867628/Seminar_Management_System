@@ -5,6 +5,7 @@ import model.AssignedEvaluation;
 import model.Evaluator;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -30,7 +31,12 @@ public class AssignedEvaluationsFrame extends JFrame {
         setLocationRelativeTo(null);
 
         String[] columns = {"Submission ID", "Student", "Session", "Date", "Venue", "File", "Total Score", "Status"};
-        model = new DefaultTableModel(columns, 0);
+        model = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 5; // ONLY "File" column editable
+            }
+        };
         table = new JTable(model);
         table.setRowHeight(30);
 
@@ -38,10 +44,11 @@ public class AssignedEvaluationsFrame extends JFrame {
 
         table.getColumn("File").setCellRenderer(new FileButtonRenderer());
         table.getColumn("File").setCellEditor(new FileButtonEditor(new JCheckBox()));
+        table.getColumn("Status").setCellRenderer(new StatusCellRenderer());
 
         JButton evaluateBtn = new JButton("Evaluate");
         JButton refreshBtn = new JButton("Refresh");
-        JButton backBtn = new JButton("Back");
+        JButton backBtn = new JButton("Back");  
 
         evaluateBtn.addActionListener(e -> openEvaluation());
         refreshBtn.addActionListener(e -> loadTable());
@@ -62,10 +69,14 @@ public class AssignedEvaluationsFrame extends JFrame {
     private void loadTable() {
         model.setRowCount(0);
         assignedList = controller.getAssignedEvaluations();
-
+    
+        System.out.println("GUI list size = " + assignedList.size());
+    
         for (AssignedEvaluation ae : assignedList) {
             model.addRow(ae.toRow());
         }
+    
+        model.fireTableDataChanged(); // 🔴 REQUIRED
     }
 
     private void openEvaluation() {
@@ -109,19 +120,16 @@ public class AssignedEvaluationsFrame extends JFrame {
             button.addActionListener(e -> {
                 try {
                     if (current != null && current.getFilePath() != null) {
-                
-                        // 1️⃣ Get raw path
+            
                         String rawPath = current.getFilePath().trim();
-                
-                        // 2️⃣ Remove surrounding quotes ( " or ' )
+            
                         if ((rawPath.startsWith("\"") && rawPath.endsWith("\"")) ||
                             (rawPath.startsWith("'") && rawPath.endsWith("'"))) {
                             rawPath = rawPath.substring(1, rawPath.length() - 1);
                         }
-                
+            
                         File file = new File(rawPath);
-                
-                        // 3️⃣ Check file exists
+            
                         if (!file.exists()) {
                             JOptionPane.showMessageDialog(
                                 null,
@@ -131,11 +139,9 @@ public class AssignedEvaluationsFrame extends JFrame {
                             );
                             return;
                         }
-                
-                        // 4️⃣ Open file
+            
                         Desktop.getDesktop().open(file);
                     }
-                
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(
                         null,
@@ -143,6 +149,8 @@ public class AssignedEvaluationsFrame extends JFrame {
                         "Error",
                         JOptionPane.ERROR_MESSAGE
                     );
+                } finally {
+                    fireEditingStopped(); // 🔴 MUST HAVE
                 }
             });
         }
@@ -153,6 +161,35 @@ public class AssignedEvaluationsFrame extends JFrame {
                 int row, int column) {
             current = assignedList.get(row);
             return button;
+        }
+    }
+
+    class StatusCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(
+                JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int row, int column) {
+    
+            Component c = super.getTableCellRendererComponent(
+                    table, value, isSelected, hasFocus, row, column);
+    
+            if (value == null) {
+                return c;
+            }
+    
+            String status = value.toString();
+    
+            if (!isSelected) { // 🔴 IMPORTANT
+                if ("COMPLETED".equals(status)) {
+                    c.setForeground(new Color(0, 128, 0)); // green
+                } else if ("IN_PROGRESS".equals(status)) {
+                    c.setForeground(Color.BLUE);
+                } else {
+                    c.setForeground(Color.GRAY);
+                }
+            }
+    
+            return c;
         }
     }
 }
