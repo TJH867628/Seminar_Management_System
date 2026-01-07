@@ -3,7 +3,7 @@ package model;
 public class AssignedEvaluation {
 
     private String studentName;
-    private String sessionID;
+    private int sessionID;
     private String date;
     private String venue;
     private String filePath;
@@ -11,7 +11,7 @@ public class AssignedEvaluation {
     private int totalScore;
     private String status;
 
-    public AssignedEvaluation(String studentName, String sessionID,
+    public AssignedEvaluation(String studentName, int sessionID,
                               String date, String venue, String filePath, int submissionID, int totalScore, String status) {
         this.studentName = studentName;
         this.sessionID = sessionID;
@@ -27,7 +27,7 @@ public class AssignedEvaluation {
         return studentName;
     }
 
-    public String getSessionID() {
+    public int getSessionID() {
         return sessionID;
     }
 
