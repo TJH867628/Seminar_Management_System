@@ -36,8 +36,7 @@ public class UserDAO {
                         if (studentRs.next()) {
                             String program = studentRs.getString("program");
                             int year = studentRs.getInt("year");
-                            int sessionID = studentRs.getInt("sessionID");
-                            return new Student(id, email, name, program, year, sessionID);
+                            return new Student(id, email, name, program, year);
                         }
                     }
 
@@ -80,6 +79,80 @@ public class UserDAO {
         }
 
         return null;
+        
+    }
+
+    public static boolean isEmailRegistered(String email) {
+        String sql = "SELECT COUNT(*) AS count FROM users WHERE email = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0;
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static int createUser(String name, String email, String password, String role) {
+        String sql = "INSERT INTO users (name, email, password, role, createdAt, updatedAt) VALUES (?, ?, ?, ?, NOW(), NOW())";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, name);
+            stmt.setString(2, email);
+            stmt.setString(3, password);
+            stmt.setString(4, role);
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new java.sql.SQLException("Creating user failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new java.sql.SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
+    public static boolean createStudent(Student student,String hashedPassword){
+        int userID = createUser(student.getName(), student.getEmail(), hashedPassword, "Student");
+
+        if(userID == -1) {
+            return false;
+        }
+
+        String sql = "INSERT INTO students (userID, program, year, createdAt, updatedAt) VALUES (?, ?, ?, NOW(), NOW())";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            stmt.setString(2, student.getProgram());
+            stmt.setInt(3, student.getYear());
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
         
     }
 }

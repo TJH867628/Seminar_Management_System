@@ -1,6 +1,9 @@
 package view.login;
 
 import javax.swing.*;
+
+import app.AppNavigator;
+
 import java.awt.*;
 import controller.LoginController;
 import model.User;
@@ -9,7 +12,7 @@ public class LoginFrame extends JFrame {
 
     private JTextField txtEmail;
     private JPasswordField txtPassword;
-    private JButton btnLogin;
+    private JButton btnLogin, btnRegister;
 
     public LoginFrame() {
         setTitle("Seminar Management System - Login");
@@ -29,11 +32,18 @@ public class LoginFrame extends JFrame {
         panel.add(txtPassword);
 
         btnLogin = new JButton("Login");
-        panel.add(new JLabel());
+        btnRegister = new JButton("Register");
+        btnRegister.addActionListener(e -> {
+            AppNavigator.openRegisterFrame(this);
+        });
+        btnLogin.addActionListener(e -> handleLogin());
+        panel.add(btnRegister);
         panel.add(btnLogin);
 
-        btnLogin.addActionListener(e -> handleLogin());
-
+        JLabel lblLoginNotice = new JLabel("Please enter your email and password registered to login", SwingConstants.CENTER);
+        lblLoginNotice.setFont(new Font("Arial", Font.ITALIC, 12));
+        lblLoginNotice.setForeground(Color.RED);
+        add(lblLoginNotice, BorderLayout.NORTH);
         add(panel);
         setVisible(true);
     }

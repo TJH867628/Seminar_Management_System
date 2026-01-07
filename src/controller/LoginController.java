@@ -2,6 +2,7 @@ package controller;
 
 import model.*;
 import dao.UserDAO;
+import app.AppNavigator;
 
 import java.awt.Dialog;
 
@@ -41,4 +42,28 @@ public class LoginController {
         AppNavigator.openDashboard(user);
         
     }
+
+    public static boolean register(JFrame parentFrame, String name, String email, String program, int year, String password) {
+        String hashedPassword = PasswordUtil.hashPassword(password);
+
+        Student newStudent = new Student(0, email, name, program, year);
+
+        parentFrame.dispose();
+        boolean success = UserDAO.createStudent(newStudent, hashedPassword);
+        if(success) {
+            DialogUtil.showInfoDialog(parentFrame,
+                    "Registration Successful",
+                    "Your account has been created successfully. You can now log in.");
+            parentFrame.dispose();
+            AppNavigator.openLoginFrame();
+            return true;
+        } else {
+            DialogUtil.showErrorDialog(parentFrame,
+                    "Registration Failed",
+                    "An error occurred while creating your account. Please try again.");
+            return false;
+        }
+
+    }
+
 }

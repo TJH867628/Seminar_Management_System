@@ -1,7 +1,7 @@
 package app;
 
 import javax.swing.JFrame;
-import view.login.LoginFrame;
+import view.login.*;
 import view.student.*;
 import view.evaluator.*;
 import view.coordinator.*;
@@ -11,6 +11,10 @@ import util.DialogUtil;
 
 public class AppNavigator {
 
+    public static void openLoginFrame() {
+        new LoginFrame();
+    }
+    
     public static void openDashboard(User user){
         if (user.getRole().equals("Student") && SecurityUtil.hasRole("Student")) {
             new StudentDashboard((Student) user);
@@ -21,6 +25,11 @@ public class AppNavigator {
         }else{
             DialogUtil.showErrorDialog(null, "Unauthorized Access", "You do not have permission to access this dashboard.");
         }
+    }
+
+    public static void openRegisterFrame(JFrame frame) {
+        frame.dispose();
+        new RegisterFrame();
     }
 
     public static void openAssignedEvaluations(JFrame frame, Evaluator evaluator) {

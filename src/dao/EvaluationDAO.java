@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class EvaluationDAO {
-    // ---------- LOAD DRAFT (IN_PROGRESS) ----------
     public Evaluation loadDraft(int submissionID, int evaluatorID) {
         String sql =
             "SELECT problemClarityScore, methodologyScore, resultScore, presentationScore, comments " +
