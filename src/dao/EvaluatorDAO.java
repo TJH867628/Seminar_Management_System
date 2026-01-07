@@ -12,7 +12,6 @@ import java.sql.ResultSetMetaData;
 
 public class EvaluatorDAO {
 
-    // sessionId is passed in (NOT evaluator id)
     public List<AssignedEvaluation> getAssignedEvaluations(int evaluatorID) {
         System.out.println("Fetching assigned evaluations for session ID: " + evaluatorID);
 

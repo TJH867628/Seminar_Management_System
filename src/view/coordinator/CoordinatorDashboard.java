@@ -23,6 +23,7 @@ public class CoordinatorDashboard extends JFrame {
         lblDepartment.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JButton btnManageSeminarSession = new JButton("Manage Seminars Session");
+        btnManageSeminarSession.addActionListener(e -> AppNavigator.openSeminarSessions(this, coordinator));
         JButton btnAssignES = new JButton("Assign Evaluators & Presenter");
         JButton btnGenerateSchduleAndReport = new JButton("Generate Seminar Schedule & Report");
         JButton btnManageAward = new JButton("Manage Awards");

@@ -33,6 +33,21 @@ public class AppNavigator {
         new EvaluationForm(assignedEvaluation, evaluator);
     }
 
+    public static void openSeminarSessions(JFrame frame, Coordinator coordinator) {
+        frame.dispose();
+        new SeminarSessions(coordinator);
+    }
+
+    public static void openAddSeminarSession(JFrame frame, Coordinator coordinator) {
+        frame.dispose();
+        new AddNewSeminarSession(coordinator);
+    }
+
+    public static void openEditSeminarSession(JFrame frame, Coordinator coordinator, Session session) {
+        frame.dispose();
+        new EditSeminarSession(coordinator, session);
+    }
+
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();
