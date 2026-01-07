@@ -39,7 +39,7 @@ INSERT INTO `assigned_session` (`id`, `SessionID`, `EvaluatorID`, `createdAt`, `
 
 -- Dumping structure for table sms_db.coordinators
 CREATE TABLE IF NOT EXISTS `coordinators` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `department` varchar(255) DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
