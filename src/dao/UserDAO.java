@@ -1,8 +1,11 @@
 package dao;
 
+import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import app.UserSession;
 
 import model.*;
 import util.DBConnection;
@@ -70,6 +73,17 @@ public class UserDAO {
                         }
                     }
                     break;
+                case "Admin":
+                    String adminSql = "SELECT id FROM admins WHERE userID = ?";
+                    try(PreparedStatement adminStmt = conn.prepareStatement(adminSql)){
+                        adminStmt.setInt(1,id);
+
+                        ResultSet adminRs = adminStmt.executeQuery();
+                        if(adminRs.next()){
+                            int adminID = adminRs.getInt("id");
+                            return new Admin(adminID, id, email, name);
+                        }
+                    }
                 default:
                     return null;
             }
@@ -154,5 +168,97 @@ public class UserDAO {
         }
         return false;
         
+    }
+
+    public static boolean createEvaluator(Evaluator evaluator, String hashedPassword) {
+        int userID = createUser(evaluator.getName(), evaluator.getEmail(), hashedPassword, "Evaluator");
+
+        if (userID == -1) {
+            return false;
+        }
+
+        String sql = "INSERT INTO evaluators (userID, expertise, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            stmt.setString(2, evaluator.getExpertise());
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean createCoordinator(Coordinator coordinator, String hashedPassword) {
+        int userID = createUser(coordinator.getName(), coordinator.getEmail(), hashedPassword, "Coordinator");
+
+        if (userID == -1) {
+            return false;
+        }
+
+        String sql = "INSERT INTO coordinators (userID, department, createdAt, updatedAt) VALUES (?, ?, NOW(), NOW())";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            stmt.setString(2, coordinator.getDepartment());
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<User> getAllUsers() {
+        
+        String sql = "SELECT * FROM users";
+        List<User> users = new ArrayList<>();
+        try(Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                String role = rs.getString("role");
+
+                if(id == UserSession.getCurrentUser().getUserID()) {
+                    continue; 
+                }
+                
+                users.add(new User(id, email, name, role) {});
+            }
+            return users;
+            
+        }catch(java.sql.SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateUser(int userID, String name, String email, String role) {
+        String sql = "UPDATE users SET name = ?, email = ?, role = ?, updatedAt = NOW() WHERE id = ?";
+        System.out.println("Update with user id: " + userID);
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, email);
+            stmt.setString(3, role);
+            stmt.setInt(4, userID);
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

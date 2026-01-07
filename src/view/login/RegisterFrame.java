@@ -6,6 +6,7 @@ import java.time.Year;
 
 import controller.LoginController;
 import util.DialogUtil;
+import util.EmailUtil;
 
 public class RegisterFrame extends JFrame{
     private JTextField txtName,txtEmail;
@@ -65,23 +66,29 @@ public class RegisterFrame extends JFrame{
                 return;
             }
 
+            if(!EmailUtil.isValidEmail(email)) {
+                DialogUtil.showErrorDialog(this, "Register Error","Please enter a valid email address.");
+                return;
+            }
+
             if(!password.equals(confirmPassword)) {
                 DialogUtil.showErrorDialog(this, "Register Error","Passwords do not match.");
                 return;
             }
 
             boolean success = LoginController.register(this, name, email, program, year, password);
+
+            if(success) {
+                DialogUtil.showInfoDialog(this, "Registration Successful","You have registered successfully. Please login.");
+                new LoginFrame();
+                dispose();
+            } else {
+                DialogUtil.showErrorDialog(this, "Register Error","Registration failed. Email might already be in use.");
+            }
         });
         panel.add(btnRegister);
 
         add(panel);
         setVisible(true);
-    }
-
-    private void handleLogin() {
-        String email = txtEmail.getText().trim();
-        String password = new String(txtPassword.getPassword());
-
-        LoginController.login(this, email, password);
     }
 }

@@ -26,7 +26,7 @@ public class LoginController {
         if(password == null || password.isEmpty()) return;
 
         String hashedPassword = PasswordUtil.hashPassword(password);
-
+        System.out.println("Hashed Password: " + hashedPassword); // Debugging line
         User user = UserDAO.validateUser(email, hashedPassword);
         if(user == null || user.getRole() == null || user.getRole().equals("invalid"))
         {
@@ -51,16 +51,8 @@ public class LoginController {
         parentFrame.dispose();
         boolean success = UserDAO.createStudent(newStudent, hashedPassword);
         if(success) {
-            DialogUtil.showInfoDialog(parentFrame,
-                    "Registration Successful",
-                    "Your account has been created successfully. You can now log in.");
-            parentFrame.dispose();
-            AppNavigator.openLoginFrame();
             return true;
         } else {
-            DialogUtil.showErrorDialog(parentFrame,
-                    "Registration Failed",
-                    "An error occurred while creating your account. Please try again.");
             return false;
         }
 
