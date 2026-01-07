@@ -108,13 +108,38 @@ public class AssignedEvaluationsFrame extends JFrame {
 
             button.addActionListener(e -> {
                 try {
-                    if (current != null) {
-                        Desktop.getDesktop().open(new File(current.getFilePath()));
+                    if (current != null && current.getFilePath() != null) {
+                
+                        // 1️⃣ Get raw path
+                        String rawPath = current.getFilePath().trim();
+                
+                        // 2️⃣ Remove surrounding quotes ( " or ' )
+                        if ((rawPath.startsWith("\"") && rawPath.endsWith("\"")) ||
+                            (rawPath.startsWith("'") && rawPath.endsWith("'"))) {
+                            rawPath = rawPath.substring(1, rawPath.length() - 1);
+                        }
+                
+                        File file = new File(rawPath);
+                
+                        // 3️⃣ Check file exists
+                        if (!file.exists()) {
+                            JOptionPane.showMessageDialog(
+                                null,
+                                "File not found:\n" + rawPath,
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                            );
+                            return;
+                        }
+                
+                        // 4️⃣ Open file
+                        Desktop.getDesktop().open(file);
                     }
+                
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(
-                        AssignedEvaluationsFrame.this,
-                        "Cannot open file.",
+                        null,
+                        "Unable to open file.",
                         "Error",
                         JOptionPane.ERROR_MESSAGE
                     );

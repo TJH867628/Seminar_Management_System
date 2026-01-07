@@ -9,10 +9,10 @@ public class AssignedEvaluation {
     private String filePath;
     private int submissionID;
     private int totalScore;
-
+    private String status;
 
     public AssignedEvaluation(String studentName, String sessionID,
-                              String date, String venue, String filePath, int submissionID, int totalScore) {
+                              String date, String venue, String filePath, int submissionID, int totalScore, String status) {
         this.studentName = studentName;
         this.sessionID = sessionID;
         this.date = date;
@@ -20,6 +20,7 @@ public class AssignedEvaluation {
         this.filePath = filePath;
         this.submissionID = submissionID;
         this.totalScore = totalScore;
+        this.status = status;
     }
 
     public String getStudentName() {
@@ -49,6 +50,10 @@ public class AssignedEvaluation {
     public int getTotalScore() {
         return totalScore;
     }
+
+    public String getStatus() {
+        return status;
+    }
     
     public Object[] toRow() {
         return new Object[]{
@@ -59,7 +64,7 @@ public class AssignedEvaluation {
             venue,
             "Open File",
             totalScore > 0 ? totalScore : "No Marking",
-            "Assigned"
+            status
         };
     }
 }

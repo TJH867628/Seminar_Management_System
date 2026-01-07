@@ -1,6 +1,7 @@
 package dao;
 
 import model.AssignedEvaluation;
+import model.Evaluation;
 import util.DBConnection;
 
 import java.sql.Connection;
@@ -27,7 +28,12 @@ public class EvaluatorDAO {
             "  sub.filePath, " +
             "  sub.id AS submissionID, " +
             "  stu.sessionID, " +
-            "  eva.totalScore " +
+            "  eva.totalScore, " +
+            "  CASE " +
+            "    WHEN eva.id IS NULL THEN 'NOT_STARTED' " +
+            "    WHEN eva.status = 'COMPLETED' THEN 'COMPLETED' " +
+            "    ELSE 'IN_PROGRESS' " +
+            "  END AS status " +
             "FROM students stu " +
             "JOIN users u ON stu.userID = u.id " +
             "JOIN submissions sub ON sub.studentID = stu.id " +
@@ -58,6 +64,7 @@ public class EvaluatorDAO {
                         rs.getString("filePath")
                         , rs.getInt("submissionID")
                         , rs.getInt("totalScore")
+                        , (rs.getString("status"))
                 ));
             }
 

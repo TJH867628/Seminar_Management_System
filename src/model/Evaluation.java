@@ -7,7 +7,6 @@ public class Evaluation {
     private int results;
     private int presentation;
     private String comments;
-    private int totalScore;
 
     public Evaluation(int pc, int m, int r, int p, String comments) {
         this.problemClarity = pc;
@@ -15,14 +14,16 @@ public class Evaluation {
         this.results = r;
         this.presentation = p;
         this.comments = comments;
-        calculateTotalScore();
     }
 
-    private void calculateTotalScore() {
-        totalScore = problemClarity + methodology + results + presentation;
-    }
+    public int getProblemClarity() { return problemClarity; }
+    public int getMethodology() { return methodology; }
+    public int getResults() { return results; }
+    public int getPresentation() { return presentation; }
+    public String getComments() { return comments; }
 
     public int getTotalScore() {
-        return totalScore;
+        return problemClarity + methodology + results + presentation;
     }
 }
+
