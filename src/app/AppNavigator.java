@@ -43,11 +43,6 @@ public class AppNavigator {
         new AddNewSeminarSession(coordinator);
     }
 
-    public static void openEditSeminarSession(JFrame frame, Coordinator coordinator, Session session) {
-        frame.dispose();
-        new EditSeminarSession(coordinator, session);
-    }
-
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();

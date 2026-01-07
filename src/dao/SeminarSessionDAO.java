@@ -20,8 +20,9 @@ public class SeminarSessionDAO {
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
+            
 
-            if(rs.next()) {
+            while(rs.next()) {
                 list.add(new Session(
                     rs.getInt("id"),
                     rs.getString("venue"),
@@ -62,7 +63,6 @@ public class SeminarSessionDAO {
         String sql = "UPDATE sessions SET venue = ?, sessionType = ?, date = ?, timeSlot = ?, updatedAt = NOW() WHERE id = ?";
 
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setString(1, session.getVenue());
             ps.setString(2, session.getSessionType());
             ps.setDate(3, new java.sql.Date(session.getDate().getTime()));

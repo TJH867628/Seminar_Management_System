@@ -95,6 +95,11 @@ public class SeminarSessions extends JFrame {
                 editButton.setEnabled(true);
                 saveEditButton.setEnabled(false);
                 cancelEditButton.setEnabled(false);
+                
+                if (table.isEditing()) {
+                    table.getCellEditor().stopCellEditing();
+                }
+
                 int sessionID = (int) model.getValueAt(editingRow,0);
                 String date = model.getValueAt(editingRow, 1).toString();
                 String venue = model.getValueAt(editingRow, 2).toString();
