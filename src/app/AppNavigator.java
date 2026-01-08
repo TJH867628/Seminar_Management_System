@@ -55,11 +55,6 @@ public class AppNavigator{
         new AddNewSeminarSession(coordinator);
     }
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
     public static void openManageUser(JFrame frame, Admin admin){
         frame.dispose();
         new ManageUser(admin);
@@ -70,23 +65,12 @@ public class AppNavigator{
         new AddNewUser(admin);
     }
 
-    public static void logout(JFrame frame){
-=======
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
     public static void assignEvaluatorsandPresenters(JFrame frame, Session seminarSession, Coordinator coordinator) {
         frame.dispose();
         new AssignEvaluatorsAndPresentersFrame(coordinator);
     }
 
     public static void logout(JFrame frame) {
->>>>>>> Stashed changes
         frame.dispose();
         UserSession.clearSession();
         new LoginFrame();
