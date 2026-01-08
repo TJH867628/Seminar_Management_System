@@ -55,6 +55,7 @@ public class AppNavigator{
         new AddNewSeminarSession(coordinator);
     }
 
+<<<<<<< Updated upstream
     public static void openManageUser(JFrame frame, Admin admin){
         frame.dispose();
         new ManageUser(admin);
@@ -65,6 +66,8 @@ public class AppNavigator{
         new AddNewUser(admin);
     }
 
+=======
+>>>>>>> Stashed changes
     public static void assignEvaluatorsandPresenters(JFrame frame, Session seminarSession, Coordinator coordinator) {
         frame.dispose();
         new AssignEvaluatorsAndPresentersFrame(coordinator);
