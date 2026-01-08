@@ -12,11 +12,22 @@ public class Evaluator extends User{
         this.expertise = expertise;
     }
 
+    public Evaluator(int evaluatorID, String expertise) {
+        super(0, "", "", "Evaluator"); // Default values for User fields
+        this.evaluatorID = evaluatorID;
+        this.expertise = expertise;
+    }
+
     public int getEvaluatorID() {
         return evaluatorID;
     }
 
     public String getExpertise() {
         return expertise;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + " (" + expertise + ")";
     }
 }
