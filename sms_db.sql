@@ -17,15 +17,15 @@ CREATE TABLE users (
 ) ENGINE=InnoDB;
 
 INSERT INTO users VALUES
-(1,'Yan Lu','student@mail.com','...','Student','2005-02-04 23:31:27','2015-11-24 04:23:47'),
-(2,'Lili','evaluator@mail.com','...','Evaluator','2005-02-04 23:31:27','2015-11-24 04:23:47'),
-(3,'Adam','coordinator@mail.com','...','Coordinator','2005-02-04 23:31:27','2015-11-24 04:23:47'),
-(6,'John','john@mail.com','...','Student','2005-02-04 23:31:27','2015-11-24 04:23:47'),
-(7,'Admin','admin@mail.com','...','Admin',NULL,NULL),
-(8,'Student 3','student3@mail.com','test','Student','2026-01-08 06:18:11','2026-01-08 06:18:11'),
-(9,'evaluator','evaluator2@mail.com','...','Evaluator','2026-01-08 06:19:47','2026-01-08 06:19:47'),
-(10,'coordinator2','coordinator2@mail.com','...','Coordinator','2026-01-08 06:20:06','2026-01-08 06:20:06'),
-(11,'asdasd','asd@AD','asd','Student','2026-01-08 06:25:02','2026-01-08 06:25:02');
+(1,'Yan Lu','student@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Student','2005-02-04 23:31:27','2015-11-24 04:23:47'),
+(2,'Lili','evaluator@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Evaluator','2005-02-04 23:31:27','2015-11-24 04:23:47'),
+(3,'Adam','coordinator@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Coordinator','2005-02-04 23:31:27','2015-11-24 04:23:47'),
+(6,'John','john@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Student','2005-02-04 23:31:27','2015-11-24 04:23:47'),
+(7,'Admin','admin@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Admin',NULL,NULL),
+(8,'Student 3','student3@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Student','2026-01-08 06:18:11','2026-01-08 06:18:11'),
+(9,'evaluator','evaluator2@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Evaluator','2026-01-08 06:19:47','2026-01-08 06:19:47'),
+(10,'coordinator2','coordinator2@mail.com','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Coordinator','2026-01-08 06:20:06','2026-01-08 06:20:06'),
+(11,'asdasd','asd@AD','ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff','Student','2026-01-08 06:25:02','2026-01-08 06:25:02');
 
 -- ========================
 -- ADMINS
