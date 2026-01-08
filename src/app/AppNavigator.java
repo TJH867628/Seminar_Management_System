@@ -60,6 +60,16 @@ public class AppNavigator{
         new AssignEvaluatorsAndPresentersFrame(coordinator);
     }
 
+    public static void openManageUser(JFrame frame, Admin admin){
+        frame.dispose();
+        new ManageUser(admin);
+    }
+
+    public static void openAddNewUser(JFrame frame,Admin admin){
+        frame.dispose();
+        new AddNewUser(admin);
+    }
+
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();
