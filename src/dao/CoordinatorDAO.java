@@ -51,23 +51,30 @@ public class CoordinatorDAO {
         return list;
     }
 
-    public List<Student> getAllStudents() {
+    public List<Student> getAllSubmissionsWithoutSession() {
         List<Student> list = new ArrayList<>();
-        String sql = "SELECT * FROM students";
-
+    
+        String sql =
+            "SELECT s.id, s.program " +
+            "FROM students s " +
+            "JOIN submissions sub ON sub.studentID = s.id " +
+            "WHERE sub.sessionID IS NULL";
+    
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-
+    
             while (rs.next()) {
                 list.add(new Student(
                         rs.getInt("id"),
                         rs.getString("program")
                 ));
             }
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
+    
         return list;
     }
 
