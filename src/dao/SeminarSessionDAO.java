@@ -40,6 +40,34 @@ public class SeminarSessionDAO {
         return list;
     }
 
+    public Session getSeminarSessionById(int sessionId) {
+        String sql = "SELECT * FROM sessions WHERE id = ?";
+        Session session = null;
+
+        try(Connection conn = DBConnection.getConnection()){
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, sessionId);
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()) {
+                session = new Session(
+                    rs.getInt("id"),
+                    rs.getString("venue"),
+                    rs.getString("sessionType"),
+                    rs.getDate("date"),
+                    rs.getTime("timeSlot")
+                );
+            }
+
+            return session;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return session;
+    }
+
     public boolean AddNewSeminarSession(Session session) {
         String sql = "INSERT INTO sessions (venue, sessionType, date, timeSlot, createdAt, updatedAt) VALUES (?, ?, ?, ?, NOW(), NOW())";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -72,6 +100,31 @@ public class SeminarSessionDAO {
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean deleteSeminarSession(int sessionId) {
+        //Check if the sessionID is used in assigned_session or submissions table before deleting
+        String checkSql1 = "SELECT COUNT(*) AS count FROM assigned_session WHERE sessionID = ?";
+        String checkSql2 = "SELECT COUNT(*) AS count FROM submissions WHERE sessionID = ?";
+        String sql = "DELETE FROM sessions WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement checkPs1 = conn.prepareStatement(checkSql1); PreparedStatement checkPs2 = conn.prepareStatement(checkSql2); PreparedStatement ps = conn.prepareStatement(sql)) {
+            checkPs1.setInt(1, sessionId);
+            ResultSet rs1 = checkPs1.executeQuery();
+            checkPs2.setInt(1, sessionId);
+            ResultSet rs2 = checkPs2.executeQuery();
+            if (rs1.next() && rs1.getInt("count") > 0 || rs2.next() && rs2.getInt("count") > 0) {
+                return false;
+            }
+
+            ps.setInt(1, sessionId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

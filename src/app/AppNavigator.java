@@ -70,6 +70,16 @@ public class AppNavigator{
         new AddNewUser(admin);
     }
 
+    public static void openManageSeminarSessionsAssignments(JFrame frame, Coordinator coordinator){
+        frame.dispose();
+        new SessionAssignmentTable(coordinator);
+    }
+
+    public static void openManageSeminarSessionsAssignmentsDetails(JFrame frame, Coordinator coordinator, int sessionID){
+        frame.dispose();
+        new SessionAssignmentDetails(coordinator, sessionID);
+    }
+
     public static void logout(JFrame frame) {
         frame.dispose();
         UserSession.clearSession();

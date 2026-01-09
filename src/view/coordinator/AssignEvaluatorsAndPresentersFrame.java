@@ -105,9 +105,6 @@ public class AssignEvaluatorsAndPresentersFrame extends JFrame {
         setVisible(true);
     }
 
-    // =========================
-    // Data loading
-    // =========================
     private void loadData() {
         List<Session> sessions = dao.getAllSessions();
         List<Evaluator> evaluators = dao.getAllEvaluators();
@@ -118,9 +115,6 @@ public class AssignEvaluatorsAndPresentersFrame extends JFrame {
         students.forEach(studentBox::addItem);
     }
 
-    // =========================
-    // Actions
-    // =========================
     private void assignEvaluator() {
         Session session = (Session) sessionBox.getSelectedItem();
         Evaluator evaluator = (Evaluator) evaluatorBox.getSelectedItem();

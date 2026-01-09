@@ -26,7 +26,7 @@ public class CoordinatorDashboard extends JFrame {
         btnManageSeminarSession.addActionListener(e -> AppNavigator.openSeminarSessions(this, coordinator));
         JButton btnAssignES = new JButton("Assign Evaluators & Presenters");
         btnAssignES.addActionListener(e -> {
-            AppNavigator.assignEvaluatorsandPresenters(this, null, coordinator);
+            AppNavigator.openManageSeminarSessionsAssignments(this, coordinator);
         });
         JButton btnGenerateSchduleAndReport = new JButton("Generate Seminar Schedule & Report");
         JButton btnManageAward = new JButton("Manage Awards");
