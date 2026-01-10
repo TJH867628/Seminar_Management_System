@@ -5,7 +5,7 @@ import javax.swing.*;
 import app.AppNavigator;
 
 import java.awt.*;
-import controller.LoginController;
+import controller.UserController;
 import model.User;
 
 public class LoginFrame extends JFrame {
@@ -52,6 +52,6 @@ public class LoginFrame extends JFrame {
         String email = txtEmail.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        LoginController.login(this, email, password);
+        UserController.login(this, email, password);
     }
 }

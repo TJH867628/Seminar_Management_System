@@ -30,17 +30,22 @@ public class CoordinatorDashboard extends JFrame {
         });
         JButton btnGenerateSchduleAndReport = new JButton("Generate Seminar Schedule & Report");
         JButton btnManageAward = new JButton("Manage Awards");
+        JButton btnManageAccount = new JButton("Manage Account");
+        btnManageAccount.addActionListener(e -> {
+            AppNavigator.openManageAccount(this, coordinator);
+        });
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
         });
 
-        JPanel panel = new JPanel(new GridLayout(5, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(6, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         panel.add(btnManageSeminarSession);
         panel.add(btnAssignES);
         panel.add(btnGenerateSchduleAndReport);
         panel.add(btnManageAward);
+        panel.add(btnManageAccount);
         panel.add(btnLogout);
 
         setLayout(new BorderLayout());

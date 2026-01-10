@@ -27,14 +27,20 @@ public class EvaluatorDashboard extends JFrame {
             AppNavigator.openAssignedEvaluations(this, evaluator);
         });
 
+        JButton btnManageAccount = new JButton("Manage Account");
+        btnManageAccount.addActionListener(e -> {
+            AppNavigator.openManageAccount(this, evaluator);
+        });
+
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
         });
 
-        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         panel.add(btnAssignEvaluations);
+        panel.add(btnManageAccount);
         panel.add(btnLogout);
 
         setLayout(new BorderLayout());

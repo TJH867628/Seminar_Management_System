@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.time.Year;
 
-import controller.LoginController;
+import controller.UserController;
 import util.DialogUtil;
 import util.EmailUtil;
 
@@ -76,7 +76,7 @@ public class RegisterFrame extends JFrame{
                 return;
             }
 
-            boolean success = LoginController.register(this, name, email, program, year, password);
+            boolean success = UserController.register(this, name, email, program, year, password);
 
             if(success) {
                 DialogUtil.showInfoDialog(this, "Registration Successful","You have registered successfully. Please login.");

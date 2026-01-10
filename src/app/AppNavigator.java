@@ -6,6 +6,7 @@ import view.student.*;
 import view.evaluator.*;
 import view.coordinator.*;
 import view.admin.*;
+import view.user.*;
 import model.*;
 import util.SecurityUtil;
 import util.DialogUtil;
@@ -55,11 +56,6 @@ public class AppNavigator{
         new AddNewSeminarSession(coordinator);
     }
 
-    public static void assignEvaluatorsandPresenters(JFrame frame, Session seminarSession, Coordinator coordinator) {
-        frame.dispose();
-        new AssignEvaluatorsAndPresentersFrame(coordinator);
-    }
-
     public static void openManageUser(JFrame frame, Admin admin){
         frame.dispose();
         new ManageUser(admin);
@@ -84,5 +80,10 @@ public class AppNavigator{
         frame.dispose();
         UserSession.clearSession();
         new LoginFrame();
+    }
+
+    public static void openManageAccount(JFrame frame, User user) {
+        frame.dispose();
+        new ManageAccount(user);
     }
 }

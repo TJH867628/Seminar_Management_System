@@ -32,6 +32,14 @@ public class Student extends User {
         return year;
     }
 
+    public void setProgram(String program) {
+        this.program = program;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
     @Override
     public String toString() {
         return getName() + " - " + program;

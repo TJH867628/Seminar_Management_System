@@ -242,7 +242,7 @@ public class UserDAO {
         return null;
     }
 
-    public boolean updateUser(int userID, String name, String email, String role) {
+    public static boolean updateUser(int userID, String name, String email, String role) {
         String sql = "UPDATE users SET name = ?, email = ?, role = ?, updatedAt = NOW() WHERE id = ?";
         System.out.println("Update with user id: " + userID);
 
@@ -251,6 +251,133 @@ public class UserDAO {
             stmt.setString(2, email);
             stmt.setString(3, role);
             stmt.setInt(4, userID);
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static Student getStudentById(int studentId) {
+        String sql = "SELECT u.id AS userID, u.email, u.name, s.program, s.year " +
+                     "FROM users u JOIN students s ON u.id = s.userID " +
+                     "WHERE u.id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, studentId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int userID = rs.getInt("userID");
+                String email = rs.getString("email");
+                String name = rs.getString("name");
+                String program = rs.getString("program");
+                int year = rs.getInt("year");
+
+                return new Student(userID, email, name, program, year);
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Coordinator getCoordinatorById(int coordinatorId) {
+        String sql = "SELECT u.id AS userID, u.email, u.name, c.department " +
+                     "FROM users u JOIN coordinators c ON u.id = c.userID " +
+                     "WHERE u.id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, coordinatorId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int userID = rs.getInt("userID");
+                String email = rs.getString("email");
+                String name = rs.getString("name");
+                String department = rs.getString("department");
+
+                return new Coordinator(userID, email, name, coordinatorId, department);
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Evaluator getEvaluatorById(int evaluatorId) {
+        String sql = "SELECT u.id AS userID, u.email, u.name, e.expertise " +
+                     "FROM users u JOIN evaluators e ON u.id = e.userID " +
+                     "WHERE u.id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, evaluatorId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int userID = rs.getInt("userID");
+                String email = rs.getString("email");
+                String name = rs.getString("name");
+                String expertise = rs.getString("expertise");
+
+                return new Evaluator(userID, email, name, evaluatorId, expertise);
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean updatePassword(int userID, String newHashedPassword) {
+        String sql = "UPDATE users SET password = ?, updatedAt = NOW() WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newHashedPassword);
+            stmt.setInt(2, userID);
+
+            int affectedRows = stmt.executeUpdate();
+
+            return affectedRows > 0;
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean checkPassword(int userID, String hashedPassword) {
+        String sql = "SELECT COUNT(*) AS count FROM users WHERE id = ? AND password = ?";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            stmt.setString(2, hashedPassword);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                return count > 0;
+            }
+
+        } catch (java.sql.SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean updateStudentInfo(Student student) {
+        String sql = "UPDATE students SET program = ?, year = ?, updatedAt = NOW() WHERE userID = ?";
+        System.out.println("Update student info with user id: " + student.getUserID());
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, student.getProgram());
+            stmt.setInt(2, student.getYear());
+            stmt.setInt(3, student.getUserID());
 
             int affectedRows = stmt.executeUpdate();
 
