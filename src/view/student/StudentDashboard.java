@@ -1,8 +1,8 @@
 package view.student;
 
-import javax.swing.*;
 import app.AppNavigator;
 import java.awt.*;
+import javax.swing.*;
 import model.Student;
 
 public class StudentDashboard extends JFrame {
@@ -24,6 +24,10 @@ public class StudentDashboard extends JFrame {
         lblProgram.setFont(new Font("Arial", Font.PLAIN, 14));
 
         JButton btnSubmission = new JButton("Create / Update Submission");
+        btnSubmission.addActionListener(e -> {
+            new CreateSubmission(student);
+        });
+
         JButton btnStatus = new JButton("View Submission Status");
         JButton btnManageAccount = new JButton("Manage Account");
         btnManageAccount.addActionListener(e -> {
