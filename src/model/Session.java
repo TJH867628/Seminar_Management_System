@@ -24,6 +24,24 @@ public class Session {
         this.evaluatorIDs = new ArrayList<>();
     }
 
+    public Session(int sessionID, String venue, Date date) {
+        this.sessionID = sessionID;
+        this.venue = venue;
+        this.date = date;
+    
+        // optional defaults
+        this.sessionType = "";
+        this.timeSlot = null;
+    
+        this.studentIDs = new ArrayList<>();
+        this.evaluatorIDs = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return "Session " + sessionID + " | " + venue + " | " + date;
+    }
+
     public int getSessionID() {
         return sessionID;
     }

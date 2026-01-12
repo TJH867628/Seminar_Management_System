@@ -31,4 +31,8 @@ public class SeminarSessionsController {
         return dao.updateSeminarSession(session);
     }
 
+    public boolean deleteSeminarSession(int sessionId) {
+        return dao.deleteSeminarSession(sessionId);
+    }
+
 }

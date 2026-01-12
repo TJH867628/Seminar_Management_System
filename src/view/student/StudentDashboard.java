@@ -25,15 +25,20 @@ public class StudentDashboard extends JFrame {
 
         JButton btnSubmission = new JButton("Create / Update Submission");
         JButton btnStatus = new JButton("View Submission Status");
+        JButton btnManageAccount = new JButton("Manage Account");
+        btnManageAccount.addActionListener(e -> {
+            AppNavigator.openManageAccount(this, student);
+        });
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
         });
 
-        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         panel.add(btnSubmission);
         panel.add(btnStatus);
+        panel.add(btnManageAccount);
         panel.add(btnLogout);
 
         setLayout(new BorderLayout());

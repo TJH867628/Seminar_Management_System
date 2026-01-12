@@ -63,6 +63,7 @@ public class SeminarSessions extends JFrame {
         loadTable();
 
         JButton addNewButton = new JButton("Add New Session");
+        JButton deleteButton = new JButton("Delete Session");
         JButton editButton = new JButton("Edit Session");
         JButton saveEditButton = new JButton("Save Edit");
         JButton cancelEditButton = new JButton("Cancel Edit");
@@ -71,6 +72,33 @@ public class SeminarSessions extends JFrame {
 
         addNewButton.addActionListener(e -> {
             AppNavigator.openAddSeminarSession(this, coordinator);
+        });
+        deleteButton.addActionListener(e -> {
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                int sessionID = (int) model.getValueAt(selectedRow, 0);
+                int confirm = JOptionPane.showConfirmDialog(
+                        this,
+                        "Are you sure you want to delete session ID " + sessionID + "?",
+                        "Confirm Deletion",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    try {
+                        boolean success = controller.deleteSeminarSession(sessionID);
+                        if (success) {
+                            DialogUtil.showInfoDialog(this, "Success", "Session deleted successfully.");
+                            loadTable();
+                        } else {
+                            DialogUtil.showErrorDialog(this, "Deletion Failed", "Failed to delete the session. It may be assigned to evaluators or submissions.");
+                        }
+                    } catch (Exception ex) {
+                        DialogUtil.showErrorDialog(this, "Error", "An error occurred: " + ex.getMessage());
+                    }   
+                }
+            } else {
+                DialogUtil.showErrorDialog(this, "No Selection","Please select a session to delete.");
+            } 
         });
         editButton.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
@@ -139,6 +167,7 @@ public class SeminarSessions extends JFrame {
 
         JPanel bottom = new JPanel();
         bottom.add(addNewButton);
+        bottom.add(deleteButton);
         bottom.add(editButton);
         bottom.add(saveEditButton);
         bottom.add(cancelEditButton);

@@ -12,8 +12,7 @@ import util.EmailUtil;
 import util.DialogUtil;
 import app.*;
 
-public class LoginController {
-
+public class UserController {
     public static void login(JFrame parentFrame, String email, String password) {
         if(email == null || email.isEmpty()) return;
         if(!EmailUtil.isValidEmail(email)){
@@ -58,4 +57,50 @@ public class LoginController {
 
     }
 
+    public static Student getStudentById(int studentId) {
+        return UserDAO.getStudentById(studentId);
+    }
+
+    public static Coordinator getCoordinatorById(int coordinatorId) {
+        return UserDAO.getCoordinatorById(coordinatorId);
+    }
+
+    public static Evaluator getEvaluatorById(int evaluatorId) {
+        return UserDAO.getEvaluatorById(evaluatorId);
+    }
+
+    public static boolean updateUserInfo(User user) {
+        return UserDAO.updateUser(user.getUserID(), user.getName(), user.getEmail(), user.getRole());
+    }
+
+    public static boolean updateUserInfo(Student student) {
+        if(UserDAO.updateUser(student.getUserID(), student.getName(), student.getEmail(), student.getRole()) &&
+        UserDAO.updateStudentInfo(student)){
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean updateUserInfo(Coordinator coordinator) {
+        UserDAO.updateUser(coordinator.getUserID(), coordinator.getName(), coordinator.getEmail(), coordinator.getRole());
+        return true;
+    }
+
+    public static boolean updateUserInfo(Evaluator evaluator) {
+        UserDAO.updateUser(evaluator.getUserID(), evaluator.getName(), evaluator.getEmail(), evaluator.getRole());
+        return true;
+    }
+
+    public static boolean changePassword(int userId, String oldPassword, String newPassword) {
+        String hashedOldPassword = PasswordUtil.hashPassword(oldPassword);
+        String hashedNewPassword = PasswordUtil.hashPassword(newPassword);
+
+        boolean isOldPasswordCorrect = UserDAO.checkPassword(userId, hashedOldPassword);
+        if(!isOldPasswordCorrect) {
+            return false;
+        }
+
+        return UserDAO.updatePassword(userId, hashedNewPassword);
+    }
 }
