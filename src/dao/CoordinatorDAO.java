@@ -80,20 +80,19 @@ public class CoordinatorDAO {
 
     public List<SessionAssignment> getAllSessionAssignments() {
         List<SessionAssignment> list = new ArrayList<>();
-        String sql = """
-            SELECT
-                s.id AS sessionID,
-                s.venue,
-                s.sessionType,
-                s.timeSlot,
-                COUNT(DISTINCT sub.id) AS submissionCount,
-                COUNT(DISTINCT asg.evaluatorID) AS evaluatorCount
-            FROM sessions s
-            LEFT JOIN submissions sub ON s.id = sub.sessionID
-            LEFT JOIN assigned_session asg ON s.id = asg.sessionID
-            GROUP BY s.id, s.venue, s.sessionType, s.timeSlot
-                """;
-
+        String sql =
+            "SELECT " +
+            "  s.id AS sessionID, " +
+            "  s.venue, " +
+            "  s.sessionType, " +
+            "  s.timeSlot, " +
+            "  COUNT(DISTINCT sub.id) AS submissionCount, " +
+            "  COUNT(DISTINCT asg.evaluatorID) AS evaluatorCount " +
+            "FROM sessions s " +
+            "LEFT JOIN submissions sub ON s.id = sub.sessionID " +
+            "LEFT JOIN assigned_session asg ON s.id = asg.sessionID " +
+            "GROUP BY s.id, s.venue, s.sessionType, s.timeSlot";
+    
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -176,13 +175,12 @@ public class CoordinatorDAO {
 
         List<Evaluator> list = new ArrayList<>();
 
-        String sql = """
-            SELECT e.id, e.expertise
-            FROM evaluators e
-            JOIN assigned_session asg ON e.id = asg.evaluatorID
-            WHERE asg.sessionID = ?
-        """;
-
+        String sql =
+            "SELECT e.id, e.expertise " +
+            "FROM evaluators e " +
+            "JOIN assigned_session asg ON e.id = asg.evaluatorID " +
+            "WHERE asg.sessionID = ?";
+    
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -205,15 +203,14 @@ public class CoordinatorDAO {
 
         List<Evaluator> list = new ArrayList<>();
 
-        String sql = """
-            SELECT e.id, e.expertise
-            FROM evaluators e
-            WHERE e.id NOT IN (
-                SELECT asg.evaluatorID
-                FROM assigned_session asg
-                WHERE asg.sessionID = ?
-            )
-        """;
+        String sql =
+            "SELECT e.id, e.expertise " +
+            "FROM evaluators e " +
+            "WHERE e.id NOT IN ( " +
+            "    SELECT asg.evaluatorID " +
+            "    FROM assigned_session asg " +
+            "    WHERE asg.sessionID = ? " +
+            ")";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

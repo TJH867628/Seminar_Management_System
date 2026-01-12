@@ -11,8 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import app.AppNavigator;
 
 import java.awt.*;
-import java.util.List;
-import java.util.concurrent.Flow;
 
 public class SessionAssignmentDetails extends JFrame {
 
