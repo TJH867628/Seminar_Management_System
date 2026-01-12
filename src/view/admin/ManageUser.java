@@ -1,15 +1,13 @@
 package view.admin;
 
-import controller.AdminController;
-import model.User;
-import model.Admin;
 import app.AppNavigator;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import controller.AdminController;
 import java.awt.*;
 import java.util.List;
-
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.Admin;
+import model.User;
 import util.DialogUtil;
 
 public class ManageUser extends JFrame {

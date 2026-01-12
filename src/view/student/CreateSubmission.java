@@ -1,5 +1,6 @@
 package view.student;
 
+import app.AppNavigator;
 import dao.SubmissionDAO;
 import java.awt.*;
 import java.io.File;
@@ -22,7 +23,7 @@ public class CreateSubmission extends JFrame {
         this.student = student;
 
         setTitle("Create Submission");
-        setSize(550, 520);
+        setSize(550, 560);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -37,28 +38,24 @@ public class CreateSubmission extends JFrame {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
         // ===== Research Title =====
-        JLabel lblTitle = new JLabel("Research Title");
+        mainPanel.add(new JLabel("Research Title"));
         txtTitle = new JTextField();
         txtTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-        mainPanel.add(lblTitle);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(txtTitle);
         mainPanel.add(Box.createVerticalStrut(15));
 
         // ===== Abstract =====
-        JLabel lblAbstract = new JLabel("Abstract");
+        mainPanel.add(new JLabel("Abstract"));
         txtAbstract = new JTextArea(5, 20);
         JScrollPane abstractScroll = new JScrollPane(txtAbstract);
         abstractScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-
-        mainPanel.add(lblAbstract);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(abstractScroll);
         mainPanel.add(Box.createVerticalStrut(15));
 
         // ===== File Upload =====
-        JLabel lblFile = new JLabel("Presentation File");
+        mainPanel.add(new JLabel("Presentation File"));
 
         txtFilePath = new JTextField();
         txtFilePath.setEditable(false);
@@ -71,23 +68,20 @@ public class CreateSubmission extends JFrame {
         filePanel.add(txtFilePath, BorderLayout.CENTER);
         filePanel.add(btnBrowse, BorderLayout.EAST);
 
-        mainPanel.add(lblFile);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(filePanel);
         mainPanel.add(Box.createVerticalStrut(15));
 
-        // ===== Supervisor Name =====
-        JLabel lblSupervisor = new JLabel("Supervisor Name");
+        // ===== Supervisor =====
+        mainPanel.add(new JLabel("Supervisor Name"));
         txtSupervisor = new JTextField();
         txtSupervisor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-
-        mainPanel.add(lblSupervisor);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(txtSupervisor);
         mainPanel.add(Box.createVerticalStrut(15));
 
         // ===== Presentation Type =====
-        JLabel lblType = new JLabel("Presentation Type");
+        mainPanel.add(new JLabel("Presentation Type"));
 
         rbOral = new JRadioButton("Oral");
         rbPoster = new JRadioButton("Poster");
@@ -100,28 +94,35 @@ public class CreateSubmission extends JFrame {
         typePanel.add(rbOral);
         typePanel.add(rbPoster);
 
-        mainPanel.add(lblType);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(typePanel);
         mainPanel.add(Box.createVerticalStrut(25));
 
-        // ===== Submit Button =====
+        // ===== Buttons Panel =====
+        JButton btnBack = new JButton("Back");
         JButton btnSubmit = new JButton("Submit");
-        btnSubmit.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnBack.addActionListener(e -> {
+            AppNavigator.openDashboard(student);
+            dispose();
+        });
+
         btnSubmit.addActionListener(e -> submit());
 
-        mainPanel.add(btnSubmit);
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        buttonPanel.add(btnBack);
+        buttonPanel.add(btnSubmit);
+
+        mainPanel.add(buttonPanel);
 
         add(mainPanel, BorderLayout.CENTER);
     }
 
     private void browseFile() {
         JFileChooser chooser = new JFileChooser();
-        int result = chooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = chooser.getSelectedFile();
-            txtFilePath.setText(selectedFile.getAbsolutePath());
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            txtFilePath.setText(file.getAbsolutePath());
         }
     }
 
@@ -132,20 +133,10 @@ public class CreateSubmission extends JFrame {
         String abs = txtAbstract.getText().trim();
         String filePath = txtFilePath.getText().trim();
 
-        if (title.isEmpty() || supervisor.isEmpty() || abs.isEmpty()) {
+        if (title.isEmpty() || supervisor.isEmpty() || abs.isEmpty() || filePath.isEmpty()) {
             JOptionPane.showMessageDialog(
                     this,
-                    "All fields are required.",
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        if (filePath.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Please upload your presentation file.",
+                    "All fields including file upload are required.",
                     "Validation Error",
                     JOptionPane.ERROR_MESSAGE
             );
@@ -155,7 +146,7 @@ public class CreateSubmission extends JFrame {
         if (!rbOral.isSelected() && !rbPoster.isSelected()) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Please select a presentation type (Oral or Poster).",
+                    "Please select a presentation type.",
                     "Validation Error",
                     JOptionPane.ERROR_MESSAGE
             );
@@ -177,20 +168,19 @@ public class CreateSubmission extends JFrame {
         boolean success = SubmissionDAO.createSubmission(submission);
 
         if (success) {
-            JOptionPane.showMessageDialog(
-                    this,
+            JOptionPane.showMessageDialog(this,
                     "Submission created successfully.",
                     "Success",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            AppNavigator.openDashboard(student);
             dispose();
+
         } else {
-            JOptionPane.showMessageDialog(
-                    this,
+            JOptionPane.showMessageDialog(this,
                     "Failed to create submission.",
                     "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

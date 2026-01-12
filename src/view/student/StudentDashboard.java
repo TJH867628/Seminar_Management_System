@@ -25,9 +25,8 @@ public class StudentDashboard extends JFrame {
 
         JButton btnSubmission = new JButton("Create / Update Submission");
         btnSubmission.addActionListener(e -> {
-            new CreateSubmission(student);
+            AppNavigator.openCreateSubmission(this, student);
         });
-
         JButton btnStatus = new JButton("View Submission Status");
         JButton btnManageAccount = new JButton("Manage Account");
         btnManageAccount.addActionListener(e -> {

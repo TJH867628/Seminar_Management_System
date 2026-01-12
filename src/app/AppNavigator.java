@@ -1,15 +1,15 @@
 package app;
 
 import javax.swing.JFrame;
+import model.*;
+import util.DialogUtil;
+import util.SecurityUtil;
+import view.admin.*;
+import view.coordinator.*;
+import view.evaluator.*;
 import view.login.*;
 import view.student.*;
-import view.evaluator.*;
-import view.coordinator.*;
-import view.admin.*;
 import view.user.*;
-import model.*;
-import util.SecurityUtil;
-import util.DialogUtil;
 
 public class AppNavigator{
 
@@ -85,5 +85,10 @@ public class AppNavigator{
     public static void openManageAccount(JFrame frame, User user) {
         frame.dispose();
         new ManageAccount(user);
+    }
+
+     public static void openCreateSubmission(JFrame frame, Student student) {
+        frame.dispose();
+        new CreateSubmission(student);
     }
 }
