@@ -19,47 +19,43 @@ public class EvaluationForm extends JFrame {
     // =========================
     // Helper methods
     // =========================
-
     private void updateTotal(JSpinner pc, JSpinner m, JSpinner r, JSpinner p, JLabel totalLabel) {
         int total = (int) pc.getValue()
-                  + (int) m.getValue()
-                  + (int) r.getValue()
-                  + (int) p.getValue();
-        totalLabel.setText("Total: " + total);
+                + (int) m.getValue()
+                + (int) r.getValue()
+                + (int) p.getValue();
+        totalLabel.setText("Total Mark: " + total);
     }
 
     private int countWords(String text) {
-        if (text == null || text.trim().isEmpty()) {
-            return 0;
-        }
+        if (text == null || text.trim().isEmpty()) return 0;
         return text.trim().split("\\s+").length;
     }
 
     // =========================
     // Constructor
     // =========================
-
     public EvaluationForm(AssignedEvaluation assignedEvaluation, Evaluator evaluator) {
 
         setTitle("Evaluation Form");
-        setSize(420, 420);
+        setMinimumSize(new Dimension(520, 600)); // 🔥 IMPORTANT
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10, 10));
 
         // =========================
-        // Header panel
+        // Header Panel
         // =========================
-
-        JPanel headerPanel = new JPanel(new GridLayout(5, 1));
+        JPanel headerPanel = new JPanel(new GridLayout(5, 1, 5, 5));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         JLabel lblTitle = new JLabel("Evaluation Form", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 18));
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
 
         JLabel lblName = new JLabel("Student: " + assignedEvaluation.getStudentName());
         JLabel lblSession = new JLabel("Session ID: " + assignedEvaluation.getSessionID());
         JLabel lblSubmissionID = new JLabel("Submission ID: " + assignedEvaluation.getSubmissionID());
 
-        JButton btnOpen = new JButton("Open File");
+        JButton btnOpen = new JButton("Open Submission File");
         btnOpen.addActionListener(e -> {
             try {
                 String rawPath = assignedEvaluation.getFilePath();
@@ -68,7 +64,6 @@ public class EvaluationForm extends JFrame {
                     return;
                 }
 
-                // remove surrounding quotes if exist
                 rawPath = rawPath.trim().replaceAll("^['\"]|['\"]$", "");
                 File file = new File(rawPath);
 
@@ -93,25 +88,30 @@ public class EvaluationForm extends JFrame {
         add(headerPanel, BorderLayout.NORTH);
 
         // =========================
-        // Form panel
+        // Form Panel (GridBagLayout)
         // =========================
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JPanel formPanel = new JPanel(new GridLayout(9, 2, 5, 5));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0;
 
-        // Spinners (0–10 enforced by model)
+        // Spinners
         JSpinner pc = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
         JSpinner m  = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
         JSpinner r  = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
         JSpinner p  = new JSpinner(new SpinnerNumberModel(0, 0, 10, 1));
 
-        JTextArea comments = new JTextArea(5, 20);
+        JTextArea comments = new JTextArea(8, 30); // 🔥 rows > 1
         comments.setLineWrap(true);
         comments.setWrapStyleWord(true);
 
         JScrollPane commentScroll = new JScrollPane(
-            comments,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+                comments,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         );
 
         JLabel totalLabel = new JLabel("Total Mark: 0");
@@ -121,52 +121,102 @@ public class EvaluationForm extends JFrame {
         JButton submit = new JButton("Submit");
         JButton back = new JButton("Back");
 
-        // =========================
-        // Live total update
-        // =========================
+        int row = 0;
 
+        // ---------- Problem Clarity ----------
+        gbc.gridx = 0; gbc.gridy = row;
+        formPanel.add(new JLabel("Problem Clarity (0–10)"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(pc, gbc);
+        row++;
+
+        // ---------- Methodology ----------
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Methodology (0–10)"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(m, gbc);
+        row++;
+
+        // ---------- Results ----------
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Results (0–10)"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(r, gbc);
+        row++;
+
+        // ---------- Presentation ----------
+        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0;
+        formPanel.add(new JLabel("Presentation (0–10)"), gbc);
+        gbc.gridx = 1; gbc.weightx = 1.0;
+        formPanel.add(p, gbc);
+        row++;
+
+        // ---------- COMMENTS (THIS IS THE FIX) ----------
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        formPanel.add(new JLabel("Comments"), gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;              // 🔥 MUST HAVE
+        gbc.weighty = 1.0;              // 🔥 MUST HAVE
+        gbc.fill = GridBagConstraints.BOTH; // 🔥 MUST HAVE
+        formPanel.add(commentScroll, gbc);
+        row++;
+
+        // ---------- Reset after comments ----------
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // ---------- Word count & total ----------
+        gbc.gridx = 0; gbc.gridy = row;
+        formPanel.add(wordCountLabel, gbc);
+        gbc.gridx = 1;
+        formPanel.add(totalLabel, gbc);
+        row++;
+
+        // ---------- Buttons ----------
+        gbc.gridx = 0; gbc.gridy = row;
+        formPanel.add(back, gbc);
+        gbc.gridx = 1;
+        formPanel.add(saveDraft, gbc);
+        row++;
+
+        gbc.gridx = 1; gbc.gridy = row;
+        formPanel.add(submit, gbc);
+
+        add(formPanel, BorderLayout.CENTER);
+
+        // =========================
+        // Live updates
+        // =========================
         pc.addChangeListener(e -> updateTotal(pc, m, r, p, totalLabel));
         m.addChangeListener(e -> updateTotal(pc, m, r, p, totalLabel));
         r.addChangeListener(e -> updateTotal(pc, m, r, p, totalLabel));
         p.addChangeListener(e -> updateTotal(pc, m, r, p, totalLabel));
 
-        // =========================
-        // Live word counter (NO dialog here)
-        // =========================
-
         comments.getDocument().addDocumentListener(new DocumentListener() {
-
-            private void updateWordCount() {
+            private void update() {
                 int count = countWords(comments.getText());
                 wordCountLabel.setText("Words: " + count + " / 200");
-
-                if (count > 200) {
-                    wordCountLabel.setForeground(Color.RED);
-                } else {
-                    wordCountLabel.setForeground(Color.BLACK);
-                }
+                wordCountLabel.setForeground(count > 200 ? Color.RED : Color.BLACK);
             }
-
-            @Override public void insertUpdate(DocumentEvent e) { updateWordCount(); }
-            @Override public void removeUpdate(DocumentEvent e) { updateWordCount(); }
-            @Override public void changedUpdate(DocumentEvent e) { updateWordCount(); }
+            public void insertUpdate(DocumentEvent e) { update(); }
+            public void removeUpdate(DocumentEvent e) { update(); }
+            public void changedUpdate(DocumentEvent e) { update(); }
         });
 
         // =========================
-        // Status-based UI control
+        // DAO & status logic
         // =========================
+        EvaluationDAO dao = new EvaluationDAO();
 
-        String status = assignedEvaluation.getStatus();
-
-        if ("COMPLETED".equals(status)) {
-
-            // Hide Save Draft
+        if ("COMPLETED".equals(assignedEvaluation.getStatus())) {
             saveDraft.setVisible(false);
-
-            // Disable Submit
             submit.setEnabled(false);
-
-            // Lock inputs
             pc.setEnabled(false);
             m.setEnabled(false);
             r.setEnabled(false);
@@ -174,116 +224,57 @@ public class EvaluationForm extends JFrame {
             comments.setEditable(false);
         }
 
-        // =========================
-        // Buttons
-        // =========================
-        EvaluationDAO dao = new EvaluationDAO();
-
-        // =========================
-        // Load draft if IN_PROGRESS
-        // =========================
-
-        if ("PENDING".equals(assignedEvaluation.getStatus()) || "COMPLETED".equals(assignedEvaluation.getStatus())) {
-
-            Evaluation draft = dao.loadDraft(
+        Evaluation draft = dao.loadDraft(
                 assignedEvaluation.getSubmissionID(),
                 evaluator.getEvaluatorID()
-            );
+        );
 
-            if (draft != null) {
-                pc.setValue(draft.getProblemClarity());
-                m.setValue(draft.getMethodology());
-                r.setValue(draft.getResults());
-                p.setValue(draft.getPresentation());
-                comments.setText(draft.getComments());
-            }
+        if (draft != null) {
+            pc.setValue(draft.getProblemClarity());
+            m.setValue(draft.getMethodology());
+            r.setValue(draft.getResults());
+            p.setValue(draft.getPresentation());
+            comments.setText(draft.getComments());
         }
 
         saveDraft.addActionListener(e -> {
-
-            Evaluation eval = new Evaluation(
-                (int) pc.getValue(),
-                (int) m.getValue(),
-                (int) r.getValue(),
-                (int) p.getValue(),
-                comments.getText()
-            );
-        
             dao.saveDraft(
-                eval,
-                assignedEvaluation.getSubmissionID(),
-                evaluator.getEvaluatorID() 
+                    new Evaluation(
+                            (int) pc.getValue(),
+                            (int) m.getValue(),
+                            (int) r.getValue(),
+                            (int) p.getValue(),
+                            comments.getText()
+                    ),
+                    assignedEvaluation.getSubmissionID(),
+                    evaluator.getEvaluatorID()
             );
-        
-            DialogUtil.showInfoDialog(
-                this,
-                "Saved",
-                "Draft saved successfully (PENDING)."
-            );
+            DialogUtil.showInfoDialog(this, "Saved", "Draft saved successfully.");
+        });
+
+        submit.addActionListener(e -> {
+            if (countWords(comments.getText()) > 200) {
+                DialogUtil.showErrorDialog(this, "Error", "Comments exceed 200 words.");
+                return;
+            }
+
+            if (dao.saveEvaluation(
+                    new Evaluation(
+                            (int) pc.getValue(),
+                            (int) m.getValue(),
+                            (int) r.getValue(),
+                            (int) p.getValue(),
+                            comments.getText()
+                    ),
+                    assignedEvaluation.getSubmissionID(),
+                    evaluator.getEvaluatorID()
+            )) {
+                DialogUtil.showInfoDialog(this, "Success", "Evaluation submitted successfully.");
+                AppNavigator.openAssignedEvaluations(this, evaluator);
+            }
         });
 
         back.addActionListener(e -> AppNavigator.openAssignedEvaluations(this, evaluator));
-
-        submit.addActionListener(e -> {
-
-            int wordCount = countWords(comments.getText());
-        
-            if (wordCount > 200) {
-                DialogUtil.showErrorDialog(
-                    this,
-                    "Comment Too Long",
-                    "Comments cannot exceed 200 words.\nCurrent count: " + wordCount
-                );
-                return;
-            }
-        
-            Evaluation evaluation = new Evaluation(
-                (int) pc.getValue(),
-                (int) m.getValue(),
-                (int) r.getValue(),
-                (int) p.getValue(),
-                comments.getText()
-            );
-        
-            boolean success = dao.saveEvaluation(
-                evaluation,
-                assignedEvaluation.getSubmissionID(),
-                evaluator.getEvaluatorID()   // ✅ consistent
-            );
-        
-            if (success) {
-                DialogUtil.showInfoDialog(
-                    this,
-                    "Success",
-                    "Evaluation submitted successfully.\nStatus: COMPLETED\nTotal Score: "
-                        + evaluation.getTotalScore()
-                );
-        
-                AppNavigator.openAssignedEvaluations(this, evaluator);
-        
-            } else {
-                DialogUtil.showErrorDialog(
-                    this,
-                    "Error",
-                    "Failed to submit evaluation."
-                );
-            }
-        });
-
-        // =========================
-        // Layout
-        // =========================
-
-        formPanel.add(new JLabel("Problem Clarity (0–10)")); formPanel.add(pc);
-        formPanel.add(new JLabel("Methodology (0–10)"));     formPanel.add(m);
-        formPanel.add(new JLabel("Results (0–10)"));         formPanel.add(r);
-        formPanel.add(new JLabel("Presentation (0–10)"));    formPanel.add(p);
-        formPanel.add(new JLabel("Comments"));               formPanel.add(commentScroll);
-        formPanel.add(wordCountLabel);                        formPanel.add(totalLabel);
-        formPanel.add(back);                                  formPanel.add(saveDraft);
-        formPanel.add(new JLabel());                          formPanel.add(submit);
-
-        add(formPanel, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
