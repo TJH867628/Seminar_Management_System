@@ -63,7 +63,7 @@ public class AssignedEvaluation {
             date,
             venue,
             "Open File",
-            totalScore > 0 ? totalScore : "No Marking",
+            totalScore > 0 ? totalScore : "No Mark",
             status
         };
     }

@@ -114,7 +114,7 @@ public class EvaluationForm extends JFrame {
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         );
 
-        JLabel totalLabel = new JLabel("Total: 0");
+        JLabel totalLabel = new JLabel("Total Mark: 0");
         JLabel wordCountLabel = new JLabel("Words: 0 / 200");
 
         JButton saveDraft = new JButton("Save Draft");
@@ -183,7 +183,7 @@ public class EvaluationForm extends JFrame {
         // Load draft if IN_PROGRESS
         // =========================
 
-        if ("IN_PROGRESS".equals(assignedEvaluation.getStatus()) || "COMPLETED".equals(assignedEvaluation.getStatus())) {
+        if ("PENDING".equals(assignedEvaluation.getStatus()) || "COMPLETED".equals(assignedEvaluation.getStatus())) {
 
             Evaluation draft = dao.loadDraft(
                 assignedEvaluation.getSubmissionID(),
@@ -218,7 +218,7 @@ public class EvaluationForm extends JFrame {
             DialogUtil.showInfoDialog(
                 this,
                 "Saved",
-                "Draft saved successfully (IN_PROGRESS)."
+                "Draft saved successfully (PENDING)."
             );
         });
 

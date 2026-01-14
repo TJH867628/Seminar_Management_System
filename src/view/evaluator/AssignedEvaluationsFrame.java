@@ -182,7 +182,7 @@ public class AssignedEvaluationsFrame extends JFrame {
             if (!isSelected) { // 🔴 IMPORTANT
                 if ("COMPLETED".equals(status)) {
                     c.setForeground(new Color(0, 128, 0)); // green
-                } else if ("IN_PROGRESS".equals(status)) {
+                } else if ("PENDING".equals(status)) {
                     c.setForeground(Color.BLUE);
                 } else {
                     c.setForeground(Color.GRAY);

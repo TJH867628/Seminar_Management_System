@@ -31,9 +31,9 @@ public class EvaluatorDAO {
         "  sub.sessionID, " +  
         "  eva.totalScore, " +
         "  CASE " +
-        "    WHEN eva.id IS NULL THEN 'NOT_STARTED' " +
+        "    WHEN eva.id IS NULL THEN 'PENDING' " +
         "    WHEN eva.status = 'COMPLETED' THEN 'COMPLETED' " +
-        "    ELSE 'IN_PROGRESS' " +
+        "    ELSE 'PENDING' " +
         "  END AS status " +
         "FROM assigned_session asg " +
         "JOIN submissions sub ON sub.sessionID = asg.sessionID " +
