@@ -1,12 +1,11 @@
 package dao;
 
-import java.util.List;
+import app.UserSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import app.UserSession;
-
+import java.util.List;
 import model.*;
 import util.DBConnection;
 
@@ -31,19 +30,29 @@ public class UserDAO {
 
             switch(role) {
                 case "Student":
-                    String studentSql = "SELECT program, year FROM students WHERE userID = ?";
+                    String studentSql = "SELECT id, program, year FROM students WHERE userID = ?";
 
-                    try (PreparedStatement studentStmt = conn.prepareStatement(studentSql)){
-                        studentStmt.setInt(1, id);
-                        ResultSet studentRs = studentStmt.executeQuery();
-                        if (studentRs.next()) {
-                            String program = studentRs.getString("program");
-                            int year = studentRs.getInt("year");
-                            return new Student(id, email, name, program, year);
-                        }
+                 try (PreparedStatement studentStmt = conn.prepareStatement(studentSql)) {
+                    studentStmt.setInt(1, id);
+                    ResultSet studentRs = studentStmt.executeQuery();
+
+                    if (studentRs.next()) {
+                        int studentID = studentRs.getInt("id");
+                        String program = studentRs.getString("program");
+                        int year = studentRs.getInt("year");
+
+                        return new Student(
+                            studentID,   
+                            id,          
+                            email,
+                            name,
+                            program,
+                            year
+                        );
                     }
+                }
+                break;
 
-                    break;
 
                 case "Evaluator":
                     String evaluatorSql = "SELECT id, expertise FROM evaluators WHERE userID = ?";
