@@ -3,160 +3,208 @@ package view.student;
 import dao.SubmissionDAO;
 import java.awt.*;
 import java.io.File;
+import java.util.List;
 import javax.swing.*;
 import model.Student;
 import model.Submission;
 
 public class EditSubmission extends JFrame {
 
-    private final Student student;
-    private final Submission submission;
-
     private JTextField txtTitle;
-    private JTextArea txtAbstract;
     private JTextField txtSupervisor;
+    private JTextArea txtAbstract;
     private JTextField txtFilePath;
+
     private JRadioButton rbOral;
     private JRadioButton rbPoster;
 
-    public EditSubmission(Student student, Submission submission) {
+    private final Student student;
+    private Submission submission;
+
+    public EditSubmission(Student student, int submissionID) {
         this.student = student;
-        this.submission = submission;
+
+        Submission found = null;
+        List<Submission> list =
+                SubmissionDAO.getSubmissionsByStudent(student.getStudentID());
+
+        for (Submission s : list) {
+            if (s.getSubmissionID() == submissionID) {
+                found = s;
+                break;
+            }
+        }
+
+        if (found == null) {
+            JOptionPane.showMessageDialog(this, "Submission not found.");
+            dispose();
+            return;
+        }
+
+        this.submission = found;
 
         setTitle("Edit Submission");
-        setSize(600, 420);
+        setSize(550, 560);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         initUI();
+        loadData();
+
         setVisible(true);
     }
 
     private void initUI() {
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
-        gbc.anchor = GridBagConstraints.WEST;
+        JPanel main = new JPanel();
+        main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
+        main.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        int y = 0;
+        // ===== Research Title =====
+        main.add(new JLabel("Research Title"));
+        txtTitle = new JTextField();
+        txtTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        main.add(txtTitle);
+        main.add(Box.createVerticalStrut(15));
 
-        gbc.gridx = 0; gbc.gridy = y;
-        panel.add(new JLabel("Research Title:"), gbc);
-        txtTitle = new JTextField(submission.getResearchTitle(), 30);
-        gbc.gridx = 1;
-        panel.add(txtTitle, gbc);
+        // ===== Abstract =====
+        main.add(new JLabel("Abstract"));
+        txtAbstract = new JTextArea(5, 20);
+        JScrollPane sp = new JScrollPane(txtAbstract);
+        sp.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        main.add(sp);
+        main.add(Box.createVerticalStrut(15));
 
-        y++;
-        gbc.gridx = 0; gbc.gridy = y;
-        panel.add(new JLabel("Abstract:"), gbc);
-        txtAbstract = new JTextArea(submission.getAbstracts(), 4, 30);
-        gbc.gridx = 1;
-        panel.add(new JScrollPane(txtAbstract), gbc);
-
-        y++;
-        gbc.gridx = 0; gbc.gridy = y;
-        panel.add(new JLabel("Presentation File:"), gbc);
-        txtFilePath = new JTextField(submission.getFilePath(), 22);
+        // ===== File =====
+        main.add(new JLabel("Presentation File"));
+        txtFilePath = new JTextField();
+        txtFilePath.setEditable(false);
 
         JButton btnBrowse = new JButton("Browse");
         btnBrowse.addActionListener(e -> browse());
 
-        JPanel filePanel = new JPanel();
-        filePanel.add(txtFilePath);
-        filePanel.add(btnBrowse);
+        JPanel filePanel = new JPanel(new BorderLayout(5, 5));
+        filePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        filePanel.add(txtFilePath, BorderLayout.CENTER);
+        filePanel.add(btnBrowse, BorderLayout.EAST);
 
-        gbc.gridx = 1;
-        panel.add(filePanel, gbc);
+        main.add(filePanel);
+        main.add(Box.createVerticalStrut(15));
 
-        y++;
-        gbc.gridx = 0; gbc.gridy = y;
-        panel.add(new JLabel("Supervisor Name:"), gbc);
-        txtSupervisor = new JTextField(submission.getSupervisorName(), 30);
-        gbc.gridx = 1;
-        panel.add(txtSupervisor, gbc);
+        // ===== Supervisor =====
+        main.add(new JLabel("Supervisor Name"));
+        txtSupervisor = new JTextField();
+        txtSupervisor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        main.add(txtSupervisor);
+        main.add(Box.createVerticalStrut(15));
 
-        y++;
-        gbc.gridx = 0; gbc.gridy = y;
-        panel.add(new JLabel("Presentation Type:"), gbc);
+        // ===== Type =====
+        main.add(new JLabel("Presentation Type"));
 
         rbOral = new JRadioButton("Oral");
         rbPoster = new JRadioButton("Poster");
 
-        if ("Oral".equalsIgnoreCase(submission.getStatus())) {
-            rbOral.setSelected(true);
-        } else {
-            rbPoster.setSelected(true);
-        }
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(rbOral);
+        bg.add(rbPoster);
 
-        ButtonGroup g = new ButtonGroup();
-        g.add(rbOral);
-        g.add(rbPoster);
-
-        JPanel typePanel = new JPanel();
+        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         typePanel.add(rbOral);
         typePanel.add(rbPoster);
+        main.add(typePanel);
+        main.add(Box.createVerticalStrut(20));
 
-        gbc.gridx = 1;
-        panel.add(typePanel, gbc);
-
-        JButton btnUpdate = new JButton("Update");
+        // ===== Buttons =====
         JButton btnBack = new JButton("Back");
+        JButton btnSave = new JButton("Save Changes");
 
         btnBack.addActionListener(e -> {
             new ManageSubmission(student);
             dispose();
         });
 
-        btnUpdate.addActionListener(e -> update());
-
-        y++;
-        gbc.gridx = 0; gbc.gridy = y;
-        gbc.gridwidth = 2;
-        gbc.anchor = GridBagConstraints.CENTER;
+        btnSave.addActionListener(e -> save());
 
         JPanel btnPanel = new JPanel();
         btnPanel.add(btnBack);
-        btnPanel.add(btnUpdate);
+        btnPanel.add(btnSave);
 
-        panel.add(btnPanel, gbc);
-        add(panel);
+        main.add(btnPanel);
+        add(main);
+    }
+
+    private void loadData() {
+
+        txtTitle.setText(submission.getResearchTitle());
+        txtAbstract.setText(submission.getAbstracts());
+        txtSupervisor.setText(submission.getSupervisorName());
+        txtFilePath.setText(submission.getFilePath());
+
+        if ("Oral".equalsIgnoreCase(submission.getPresentationType())) {
+            rbOral.setSelected(true);
+        } else {
+            rbPoster.setSelected(true);
+        }
+
+        // 🔒 LOCK if evaluated
+        if (!submission.getStatus().equalsIgnoreCase("submitted")) {
+            txtTitle.setEnabled(false);
+            txtAbstract.setEnabled(false);
+            txtSupervisor.setEnabled(false);
+            txtFilePath.setEnabled(false);
+            rbOral.setEnabled(false);
+            rbPoster.setEnabled(false);
+        }
     }
 
     private void browse() {
-        JFileChooser chooser = new JFileChooser();
-        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
+        JFileChooser fc = new JFileChooser();
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File f = fc.getSelectedFile();
             txtFilePath.setText(f.getAbsolutePath());
         }
     }
 
-    private void update() {
+    private void save() {
+
+        if (!submission.getStatus().equalsIgnoreCase("submitted")) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "This submission can no longer be edited.",
+                    "Locked",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        if (txtTitle.getText().isBlank()
+                || txtSupervisor.getText().isBlank()
+                || txtAbstract.getText().isBlank()
+                || txtFilePath.getText().isBlank()) {
+
+            JOptionPane.showMessageDialog(this, "All fields are required.");
+            return;
+        }
+
+        String type = rbOral.isSelected() ? "Oral" : "Poster";
 
         Submission updated = new Submission(
                 submission.getSubmissionID(),
                 txtTitle.getText().trim(),
                 txtFilePath.getText().trim(),
-                submission.getStudentID(),
+                student.getStudentID(),
                 txtAbstract.getText().trim(),
                 txtSupervisor.getText().trim(),
-                rbOral.isSelected() ? "Oral" : "Poster"
+                type,
+                submission.getStatus() // 👈 status untouched
         );
 
-        boolean ok = SubmissionDAO.updateSubmission(updated);
-
-        if (ok) {
-            JOptionPane.showMessageDialog(this,
-                    "Submission updated successfully.",
-                    "Success",
-                    JOptionPane.INFORMATION_MESSAGE);
+        if (SubmissionDAO.updateSubmission(updated)) {
+            JOptionPane.showMessageDialog(this, "Submission updated.");
             new ManageSubmission(student);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this,
-                    "Update failed.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Update failed.");
         }
     }
 }

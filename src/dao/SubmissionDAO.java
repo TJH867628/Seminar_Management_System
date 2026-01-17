@@ -8,82 +8,50 @@ import util.DBConnection;
 
 public class SubmissionDAO {
 
-    // ========================
+    // =========================
     // CREATE
-    // ========================
-    public static boolean createSubmission(Submission submission) {
+    // =========================
+    public static boolean createSubmission(Submission s) {
 
-    String sql = "INSERT INTO submissions " +
-            "(studentID, researchTitle, abstract, supervisorName, filePath, status, createdDate, updatedDate) " +
-            "VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
-
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-
-        int studentTableID =
-                getStudentTableIDByUserID(submission.getStudentID());
-
-        if (studentTableID == -1) {
-            System.out.println("Student record not found.");
-            return false;
-        }
-
-        ps.setInt(1, studentTableID);
-        ps.setString(2, submission.getResearchTitle());
-        ps.setString(3, submission.getAbstracts());
-        ps.setString(4, submission.getSupervisorName());
-        ps.setString(5, submission.getFilePath());
-        ps.setString(6, submission.getStatus());
-
-        return ps.executeUpdate() > 0;
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-
-
-    // ========================
-    // READ (by ID)
-    // ========================
-    public static Submission getSubmissionByID(int id) {
-
-        String sql = "SELECT * FROM submissions WHERE id = ?";
+        String sql = """
+            INSERT INTO submissions
+            (studentID, researchTitle, abstract, supervisorName,
+             presentationType, filePath, status, createdDate, updatedDate)
+            VALUES (?, ?, ?, ?, ?, ?, 'submitted', NOW(), NOW())
+        """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+            ps.setInt(1, s.getStudentID());
+            ps.setString(2, s.getResearchTitle());
+            ps.setString(3, s.getAbstracts());
+            ps.setString(4, s.getSupervisorName());
+            ps.setString(5, s.getPresentationType());
+            ps.setString(6, s.getFilePath());
 
-            if (rs.next()) {
-                return new Submission(
-                        rs.getInt("id"),
-                        rs.getString("researchTitle"),
-                        rs.getString("filePath"),
-                        rs.getInt("studentID"),
-                        rs.getString("abstract"),
-                        rs.getString("supervisorName"),
-                        rs.getString("status")
-                );
-            }
+            return ps.executeUpdate() > 0;
 
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-
-        return null;
     }
 
-    // ========================
-    // READ (by student)
-    // ========================
+    // =========================
+    // READ BY STUDENT
+    // =========================
     public static List<Submission> getSubmissionsByStudent(int studentID) {
 
         List<Submission> list = new ArrayList<>();
 
-        String sql = "SELECT * FROM submissions WHERE studentID = ?";
+        String sql = """
+            SELECT id, researchTitle, abstract, supervisorName,
+                   presentationType, filePath, status
+            FROM submissions
+            WHERE studentID = ?
+            ORDER BY createdDate DESC
+        """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -96,9 +64,10 @@ public class SubmissionDAO {
                         rs.getInt("id"),
                         rs.getString("researchTitle"),
                         rs.getString("filePath"),
-                        rs.getInt("studentID"),
+                        studentID,
                         rs.getString("abstract"),
                         rs.getString("supervisorName"),
+                        rs.getString("presentationType"),
                         rs.getString("status")
                 ));
             }
@@ -110,25 +79,32 @@ public class SubmissionDAO {
         return list;
     }
 
-    // ========================
-    // UPDATE
-    // ========================
-    public static boolean updateSubmission(Submission submission) {
+    // =========================
+    // UPDATE (LOCKED STATUS SAFE)
+    // =========================
+    public static boolean updateSubmission(Submission s) {
 
-        String sql = "UPDATE submissions SET " +
-                "researchTitle = ?, abstract = ?, supervisorName = ?, " +
-                "filePath = ?, status = ?, updatedDate = NOW() " +
-                "WHERE id = ?";
+        String sql = """
+            UPDATE submissions
+            SET researchTitle = ?,
+                abstract = ?,
+                supervisorName = ?,
+                presentationType = ?,
+                filePath = ?,
+                updatedDate = NOW()
+            WHERE id = ?
+              AND status = 'submitted'
+        """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, submission.getResearchTitle());
-            ps.setString(2, submission.getAbstracts());
-            ps.setString(3, submission.getSupervisorName());
-            ps.setString(4, submission.getFilePath());
-            ps.setString(5, submission.getStatus());
-            ps.setInt(6, submission.getSubmissionID());
+            ps.setString(1, s.getResearchTitle());
+            ps.setString(2, s.getAbstracts());
+            ps.setString(3, s.getSupervisorName());
+            ps.setString(4, s.getPresentationType());
+            ps.setString(5, s.getFilePath());
+            ps.setInt(6, s.getSubmissionID());
 
             return ps.executeUpdate() > 0;
 
@@ -138,25 +114,26 @@ public class SubmissionDAO {
         }
     }
 
-    public static int getStudentTableIDByUserID(int userID) {
+    // =========================
+    // DELETE (ONLY IF SAFE)
+    // =========================
+    public static boolean deleteSubmission(int submissionID) {
 
-    String sql = "SELECT id FROM students WHERE userID = ?";
+        String sql = """
+            DELETE FROM submissions
+            WHERE id = ?
+              AND status = 'submitted'
+        """;
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        ps.setInt(1, userID);
-        ResultSet rs = ps.executeQuery();
+            ps.setInt(1, submissionID);
+            return ps.executeUpdate() > 0;
 
-        if (rs.next()) {
-            return rs.getInt("id");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-
-    return -1; // not found
-}
-
 }
