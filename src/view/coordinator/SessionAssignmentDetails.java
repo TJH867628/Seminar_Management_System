@@ -98,11 +98,11 @@ public class SessionAssignmentDetails extends JFrame {
         panel.setBorder(BorderFactory.createTitledBorder("Submissions"));
 
         assignedSubModel = new DefaultTableModel(
-                new String[]{"ID", "Title"}, 0);
+                new String[]{"ID", "Title", "Presentation Type"}, 0);
         assignedSubTable = new JTable(assignedSubModel);
 
         availableSubModel = new DefaultTableModel(
-                new String[]{"ID", "Title"}, 0);
+                new String[]{"ID", "Title", "Presentation Type"}, 0);
         availableSubTable = new JTable(availableSubModel);
 
         JButton btnAssign = new JButton("Assign >");
@@ -173,6 +173,7 @@ public class SessionAssignmentDetails extends JFrame {
             assignedSubModel.addRow(new Object[]{
                     s.getSubmissionID(),
                     s.getResearchTitle(),
+                    s.getPresentationType()
             });
         }
 
@@ -180,6 +181,7 @@ public class SessionAssignmentDetails extends JFrame {
             availableSubModel.addRow(new Object[]{
                     s.getSubmissionID(),
                     s.getResearchTitle(),
+                    s.getPresentationType()
             });
         }
     }

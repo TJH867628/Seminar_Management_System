@@ -132,8 +132,9 @@ public class CoordinatorDAO {
                     rs.getString("researchTitle"),
                     rs.getString("filePath"),
                     rs.getInt("studentID"),
-                    rs.getString("abstract"),
+                    rs.getString("abstracts"),
                     rs.getString("supervisorName"),
+                    rs.getString("presentationType"),
                     rs.getString("status")
                 ));
             }
@@ -160,8 +161,9 @@ public class CoordinatorDAO {
                     rs.getString("researchTitle"),
                     rs.getString("filePath"),
                     rs.getInt("studentID"),
-                    rs.getString("abstract"),
+                    rs.getString("abstracts"),
                     rs.getString("supervisorName"),
+                    rs.getString("presentationType"),
                     rs.getString("status")
                 ));
             }
