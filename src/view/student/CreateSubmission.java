@@ -11,9 +11,9 @@ import model.Submission;
 public class CreateSubmission extends JFrame {
 
     private JTextField txtTitle;
-    private JTextField txtSupervisor;
     private JTextArea txtAbstract;
     private JTextField txtFilePath;
+    private JTextField txtSupervisor;
     private JRadioButton rbOral;
     private JRadioButton rbPoster;
 
@@ -23,7 +23,7 @@ public class CreateSubmission extends JFrame {
         this.student = student;
 
         setTitle("Create Submission");
-        setSize(550, 560);
+        setSize(600, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -33,72 +33,74 @@ public class CreateSubmission extends JFrame {
 
     private void initUI() {
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.anchor = GridBagConstraints.WEST;
 
         // ===== Research Title =====
-        mainPanel.add(new JLabel("Research Title"));
-        txtTitle = new JTextField();
-        txtTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(txtTitle);
-        mainPanel.add(Box.createVerticalStrut(15));
+        gbc.gridx = 0; gbc.gridy = 0;
+        panel.add(new JLabel("Research Title:"), gbc);
+
+        txtTitle = new JTextField(30);
+        gbc.gridx = 1;
+        panel.add(txtTitle, gbc);
 
         // ===== Abstract =====
-        mainPanel.add(new JLabel("Abstract"));
-        txtAbstract = new JTextArea(5, 20);
+        gbc.gridx = 0; gbc.gridy++;
+        panel.add(new JLabel("Abstract:"), gbc);
+
+        txtAbstract = new JTextArea(4, 30);
         JScrollPane abstractScroll = new JScrollPane(txtAbstract);
-        abstractScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(abstractScroll);
-        mainPanel.add(Box.createVerticalStrut(15));
+        gbc.gridx = 1;
+        panel.add(abstractScroll, gbc);
 
-        // ===== File Upload =====
-        mainPanel.add(new JLabel("Presentation File"));
+        // ===== Presentation File =====
+        gbc.gridx = 0; gbc.gridy++;
+        panel.add(new JLabel("presentation file:"), gbc);
 
-        txtFilePath = new JTextField();
+        txtFilePath = new JTextField(22);
         txtFilePath.setEditable(false);
 
         JButton btnBrowse = new JButton("Browse");
         btnBrowse.addActionListener(e -> browseFile());
 
-        JPanel filePanel = new JPanel(new BorderLayout(5, 5));
-        filePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        filePanel.add(txtFilePath, BorderLayout.CENTER);
-        filePanel.add(btnBrowse, BorderLayout.EAST);
+        JPanel filePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        filePanel.add(txtFilePath);
+        filePanel.add(btnBrowse);
 
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(filePanel);
-        mainPanel.add(Box.createVerticalStrut(15));
+        gbc.gridx = 1;
+        panel.add(filePanel, gbc);
 
-        // ===== Supervisor =====
-        mainPanel.add(new JLabel("Supervisor Name"));
-        txtSupervisor = new JTextField();
-        txtSupervisor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(txtSupervisor);
-        mainPanel.add(Box.createVerticalStrut(15));
+        // ===== Supervisor Name =====
+        gbc.gridx = 0; gbc.gridy++;
+        panel.add(new JLabel("Supervisor Name:"), gbc);
+
+        txtSupervisor = new JTextField(30);
+        gbc.gridx = 1;
+        panel.add(txtSupervisor, gbc);
 
         // ===== Presentation Type =====
-        mainPanel.add(new JLabel("Presentation Type"));
+        gbc.gridx = 0; gbc.gridy++;
+        panel.add(new JLabel("presentation type:"), gbc);
 
-        rbOral = new JRadioButton("Oral");
-        rbPoster = new JRadioButton("Poster");
+        rbOral = new JRadioButton("oral");
+        rbPoster = new JRadioButton("poster");
 
         ButtonGroup group = new ButtonGroup();
         group.add(rbOral);
         group.add(rbPoster);
 
-        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         typePanel.add(rbOral);
         typePanel.add(rbPoster);
 
-        mainPanel.add(Box.createVerticalStrut(5));
-        mainPanel.add(typePanel);
-        mainPanel.add(Box.createVerticalStrut(25));
+        gbc.gridx = 1;
+        panel.add(typePanel, gbc);
 
-        // ===== Buttons Panel =====
+        // ===== Buttons =====
         JButton btnBack = new JButton("Back");
         JButton btnSubmit = new JButton("Submit");
 
@@ -113,9 +115,12 @@ public class CreateSubmission extends JFrame {
         buttonPanel.add(btnBack);
         buttonPanel.add(btnSubmit);
 
-        mainPanel.add(buttonPanel);
+        gbc.gridx = 0; gbc.gridy++;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(buttonPanel, gbc);
 
-        add(mainPanel, BorderLayout.CENTER);
+        add(panel);
     }
 
     private void browseFile() {
@@ -129,27 +134,23 @@ public class CreateSubmission extends JFrame {
     private void submit() {
 
         String title = txtTitle.getText().trim();
-        String supervisor = txtSupervisor.getText().trim();
         String abs = txtAbstract.getText().trim();
+        String supervisor = txtSupervisor.getText().trim();
         String filePath = txtFilePath.getText().trim();
 
-        if (title.isEmpty() || supervisor.isEmpty() || abs.isEmpty() || filePath.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
+        if (title.isEmpty() || abs.isEmpty() || supervisor.isEmpty() || filePath.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
                     "All fields including file upload are required.",
                     "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (!rbOral.isSelected() && !rbPoster.isSelected()) {
-            JOptionPane.showMessageDialog(
-                    this,
+            JOptionPane.showMessageDialog(this,
                     "Please select a presentation type.",
                     "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -172,10 +173,8 @@ public class CreateSubmission extends JFrame {
                     "Submission created successfully.",
                     "Success",
                     JOptionPane.INFORMATION_MESSAGE);
-
             AppNavigator.openDashboard(student);
             dispose();
-
         } else {
             JOptionPane.showMessageDialog(this,
                     "Failed to create submission.",
