@@ -134,15 +134,16 @@ INSERT INTO assigned_session VALUES
 (11,1,2,NULL,NULL);
 
 -- =====================
--- submissions
+-- submissions (FIXED ONLY HERE)
 -- =====================
 DROP TABLE IF EXISTS submissions;
 CREATE TABLE submissions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   studentID INT,
   researchTitle VARCHAR(255),
-  abstract VARCHAR(255),
+  abstracts VARCHAR(255),
   supervisorName VARCHAR(255),
+  presentationType VARCHAR(50),
   filePath VARCHAR(255),
   status VARCHAR(50),
   sessionID INT,
@@ -153,9 +154,9 @@ CREATE TABLE submissions (
 ) ENGINE=InnoDB;
 
 INSERT INTO submissions VALUES
-(1,1,'Test','testabstract','test1','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',1,'2026-01-06 05:27:10','2026-01-06 05:27:12'),
-(2,1,'Test2','haha','sohai','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',NULL,'2026-01-06 05:42:19','2026-01-06 05:42:20'),
-(3,1,'Test3','nn','nn','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',NULL,'2026-01-06 17:58:37','2026-01-06 17:58:38');
+(1,1,'Test','testabstract','test1','Oral','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',1,'2026-01-06 05:27:10','2026-01-06 05:27:12'),
+(2,1,'Test2','haha','sohai','Poster','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',NULL,'2026-01-06 05:42:19','2026-01-06 05:42:20'),
+(3,1,'Test3','nn','nn','Oral','C:\\Users\\chaiy\\Downloads\\MC.pdf','submitted',NULL,'2026-01-06 17:58:37','2026-01-06 17:58:38');
 
 -- =====================
 -- evaluation
