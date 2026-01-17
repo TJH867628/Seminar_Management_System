@@ -2,7 +2,6 @@ package model;
 import java.sql.Time;
 import java.util.*;
 
-
 public class Session {
 
     private int sessionID;
@@ -77,6 +76,7 @@ public class Session {
             venue,
             sessionType,
             timeSlot.toString(),
+    
         };
     }
 }
