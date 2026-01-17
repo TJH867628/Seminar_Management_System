@@ -1,9 +1,9 @@
 package view.student;
 
+import app.AppNavigator;
 import dao.SubmissionDAO;
 import java.awt.*;
 import java.io.File;
-import java.util.List;
 import javax.swing.*;
 import model.Student;
 import model.Submission;
@@ -14,43 +14,33 @@ public class EditSubmission extends JFrame {
     private JTextField txtSupervisor;
     private JTextArea txtAbstract;
     private JTextField txtFilePath;
-
     private JRadioButton rbOral;
     private JRadioButton rbPoster;
 
     private final Student student;
-    private Submission submission;
+    private final Submission submission;
 
     public EditSubmission(Student student, int submissionID) {
+
         this.student = student;
+        this.submission = SubmissionDAO.getSubmissionById(submissionID);
 
-        Submission found = null;
-        List<Submission> list =
-                SubmissionDAO.getSubmissionsByStudent(student.getStudentID());
-
-        for (Submission s : list) {
-            if (s.getSubmissionID() == submissionID) {
-                found = s;
-                break;
-            }
-        }
-
-        if (found == null) {
-            JOptionPane.showMessageDialog(this, "Submission not found.");
+        if (submission == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Submission not found.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
             dispose();
             return;
         }
 
-        this.submission = found;
-
         setTitle("Edit Submission");
         setSize(550, 560);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         initUI();
         loadData();
-
         setVisible(true);
     }
 
@@ -60,66 +50,51 @@ public class EditSubmission extends JFrame {
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        // ===== Research Title =====
         main.add(new JLabel("Research Title"));
         txtTitle = new JTextField();
-        txtTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         main.add(txtTitle);
-        main.add(Box.createVerticalStrut(15));
+        main.add(Box.createVerticalStrut(10));
 
-        // ===== Abstract =====
         main.add(new JLabel("Abstract"));
         txtAbstract = new JTextArea(5, 20);
-        JScrollPane sp = new JScrollPane(txtAbstract);
-        sp.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        main.add(sp);
-        main.add(Box.createVerticalStrut(15));
+        main.add(new JScrollPane(txtAbstract));
+        main.add(Box.createVerticalStrut(10));
 
-        // ===== File =====
         main.add(new JLabel("Presentation File"));
         txtFilePath = new JTextField();
         txtFilePath.setEditable(false);
-
         JButton btnBrowse = new JButton("Browse");
-        btnBrowse.addActionListener(e -> browse());
+        btnBrowse.addActionListener(e -> browseFile());
 
         JPanel filePanel = new JPanel(new BorderLayout(5, 5));
-        filePanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         filePanel.add(txtFilePath, BorderLayout.CENTER);
         filePanel.add(btnBrowse, BorderLayout.EAST);
-
         main.add(filePanel);
-        main.add(Box.createVerticalStrut(15));
+        main.add(Box.createVerticalStrut(10));
 
-        // ===== Supervisor =====
         main.add(new JLabel("Supervisor Name"));
         txtSupervisor = new JTextField();
-        txtSupervisor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
         main.add(txtSupervisor);
-        main.add(Box.createVerticalStrut(15));
+        main.add(Box.createVerticalStrut(10));
 
-        // ===== Type =====
         main.add(new JLabel("Presentation Type"));
-
         rbOral = new JRadioButton("Oral");
         rbPoster = new JRadioButton("Poster");
 
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(rbOral);
-        bg.add(rbPoster);
+        ButtonGroup group = new ButtonGroup();
+        group.add(rbOral);
+        group.add(rbPoster);
 
         JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         typePanel.add(rbOral);
         typePanel.add(rbPoster);
         main.add(typePanel);
-        main.add(Box.createVerticalStrut(20));
 
-        // ===== Buttons =====
         JButton btnBack = new JButton("Back");
-        JButton btnSave = new JButton("Save Changes");
+        JButton btnSave = new JButton("Save");
 
         btnBack.addActionListener(e -> {
-            new ManageSubmission(student);
+            AppNavigator.openManageSubmission(this, student);
             dispose();
         });
 
@@ -129,12 +104,13 @@ public class EditSubmission extends JFrame {
         btnPanel.add(btnBack);
         btnPanel.add(btnSave);
 
+        main.add(Box.createVerticalStrut(15));
         main.add(btnPanel);
+
         add(main);
     }
 
     private void loadData() {
-
         txtTitle.setText(submission.getResearchTitle());
         txtAbstract.setText(submission.getAbstracts());
         txtSupervisor.setText(submission.getSupervisorName());
@@ -145,66 +121,49 @@ public class EditSubmission extends JFrame {
         } else {
             rbPoster.setSelected(true);
         }
-
-        // 🔒 LOCK if evaluated
-        if (!submission.getStatus().equalsIgnoreCase("submitted")) {
-            txtTitle.setEnabled(false);
-            txtAbstract.setEnabled(false);
-            txtSupervisor.setEnabled(false);
-            txtFilePath.setEnabled(false);
-            rbOral.setEnabled(false);
-            rbPoster.setEnabled(false);
-        }
     }
 
-    private void browse() {
-        JFileChooser fc = new JFileChooser();
-        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            File f = fc.getSelectedFile();
-            txtFilePath.setText(f.getAbsolutePath());
+    private void browseFile() {
+        JFileChooser chooser = new JFileChooser();
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            txtFilePath.setText(file.getAbsolutePath());
         }
     }
 
     private void save() {
 
-        if (!submission.getStatus().equalsIgnoreCase("submitted")) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "This submission can no longer be edited.",
-                    "Locked",
-                    JOptionPane.WARNING_MESSAGE
-            );
+        if (!rbOral.isSelected() && !rbPoster.isSelected()) {
+            JOptionPane.showMessageDialog(this,
+                    "Select presentation type.",
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        if (txtTitle.getText().isBlank()
-                || txtSupervisor.getText().isBlank()
-                || txtAbstract.getText().isBlank()
-                || txtFilePath.getText().isBlank()) {
-
-            JOptionPane.showMessageDialog(this, "All fields are required.");
-            return;
-        }
-
-        String type = rbOral.isSelected() ? "Oral" : "Poster";
 
         Submission updated = new Submission(
                 submission.getSubmissionID(),
                 txtTitle.getText().trim(),
                 txtFilePath.getText().trim(),
-                student.getStudentID(),
+                submission.getStudentID(),
                 txtAbstract.getText().trim(),
                 txtSupervisor.getText().trim(),
-                type,
-                submission.getStatus() // 👈 status untouched
+                rbOral.isSelected() ? "Oral" : "Poster",
+                submission.getStatus()
         );
 
         if (SubmissionDAO.updateSubmission(updated)) {
-            JOptionPane.showMessageDialog(this, "Submission updated.");
-            new ManageSubmission(student);
+            JOptionPane.showMessageDialog(this,
+                    "Submission updated successfully.",
+                    "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+            AppNavigator.openManageSubmission(this, student);
             dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Update failed.");
+            JOptionPane.showMessageDialog(this,
+                    "Update failed.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
