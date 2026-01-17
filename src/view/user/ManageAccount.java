@@ -1,6 +1,8 @@
 package view.user;
 
 import model.*;
+import util.DialogUtil;
+
 import javax.swing.*;
 
 import app.AppNavigator;
@@ -40,7 +42,7 @@ public class ManageAccount extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        userInfoPanel = new JPanel(new GridLayout(12, 2, 10, 10));
+        userInfoPanel = new JPanel(new GridLayout(11, 2, 10, 10));
         userInfoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         userInfoPanel.add(lblChangeUserInfo);
         userInfoPanel.add(new JLabel());
@@ -55,8 +57,8 @@ public class ManageAccount extends JFrame {
         userInfoPanel.add(lblEmail);
         userInfoPanel.add(txtEmail);
 
-        btnSave = new JButton("Save Info");
-        btnSave.addActionListener(e -> saveInfo());
+        btnSave = new JButton("Save");
+        btnSave.addActionListener(e -> handleSave());
         btnBack = new JButton("Back");
         btnBack.addActionListener(e -> {
             dispose();
@@ -64,9 +66,6 @@ public class ManageAccount extends JFrame {
         });
 
         handleRoleSpecificInfo();
-
-        userInfoPanel.add(new JLabel());
-        userInfoPanel.add(btnSave);
 
         lblChangePassword = new JLabel("CHANGE PASSWORD");
         userInfoPanel.add(lblChangePassword);
@@ -84,10 +83,8 @@ public class ManageAccount extends JFrame {
         userInfoPanel.add(txtNewPassword);
         userInfoPanel.add(lblConfirmPassword);
         userInfoPanel.add(txtConfirmPassword);
-        btnSaveChangePassword = new JButton("Save Password");
-        btnSaveChangePassword.addActionListener(e -> savePassword());
         userInfoPanel.add(new JLabel());
-        userInfoPanel.add(btnSaveChangePassword);
+        userInfoPanel.add(btnSave);
         userInfoPanel.add(new JLabel());
         userInfoPanel.add(btnBack);
 
@@ -122,6 +119,14 @@ public class ManageAccount extends JFrame {
                 userInfoPanel.add(new JLabel("No specific role information."));
         }
 
+    }
+
+    public void handleSave() {
+        saveInfo();
+
+        if(txtNewPassword.getText().trim().length() > 0 || txtCurrentPassword.getText().trim().length() > 0 || txtConfirmPassword.getText().trim().length() > 0) {
+            savePassword();
+        }
     }
 
     public void saveInfo() {
@@ -188,19 +193,17 @@ public class ManageAccount extends JFrame {
         String confirmPassword = new String(txtConfirmPassword.getText());
 
         if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "All password fields are required",
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE);
+            DialogUtil.showErrorDialog(this, "Validation Error", "All password fields are required");
             return;
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(this,
-                    "New password and confirm password do not match",
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE);
+            DialogUtil.showErrorDialog(this, "Validation Error", "New password and confirm password do not match");
             return;
+        }
+
+        if(currentPassword.equals(confirmPassword)){
+            DialogUtil.showErrorDialog(this, "Validation Error", "New password must be different from current password");
         }
 
         boolean success = UserController.changePassword(
