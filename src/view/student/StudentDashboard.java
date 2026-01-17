@@ -10,7 +10,7 @@ public class StudentDashboard extends JFrame {
     public StudentDashboard(Student student) {
 
         setTitle("Student Dashboard");
-        setSize(400, 300);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -23,11 +23,14 @@ public class StudentDashboard extends JFrame {
         JLabel lblProgram = new JLabel("Program: " + student.getProgram(), SwingConstants.CENTER);
         lblProgram.setFont(new Font("Arial", Font.PLAIN, 14));
 
-        JButton btnSubmission = new JButton("Create / Update Submission");
+        JButton btnSubmission = new JButton("Create Submission");
         btnSubmission.addActionListener(e -> {
             AppNavigator.openCreateSubmission(this, student);
         });
-        JButton btnStatus = new JButton("View Submission Status");
+        JButton btnModify = new JButton("Manage Submissions");
+        btnModify.addActionListener(e -> {
+            AppNavigator.openManageSubmission(this, student);
+        });
         JButton btnManageAccount = new JButton("Manage Account");
         btnManageAccount.addActionListener(e -> {
             AppNavigator.openManageAccount(this, student);
@@ -37,12 +40,16 @@ public class StudentDashboard extends JFrame {
             AppNavigator.logout(this);
         });
 
+
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         panel.add(btnSubmission);
-        panel.add(btnStatus);
+        panel.add(btnModify);
         panel.add(btnManageAccount);
         panel.add(btnLogout);
+
+
+
 
         setLayout(new BorderLayout());
         headerPanel.add(lblTitle);
@@ -50,6 +57,8 @@ public class StudentDashboard extends JFrame {
         headerPanel.add(lblProgram);
         add(headerPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
+        
+        
 
         setVisible(true);
     }

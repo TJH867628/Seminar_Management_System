@@ -87,8 +87,13 @@ public class AppNavigator{
         new ManageAccount(user);
     }
 
-     public static void openCreateSubmission(JFrame frame, Student student) {
+    public static void openCreateSubmission(JFrame frame, Student student) {
         frame.dispose();
         new CreateSubmission(student);
+    }
+
+    public static void openManageSubmission(JFrame frame, Student student) {
+        frame.dispose();
+        new ManageSubmission(student);
     }
 }

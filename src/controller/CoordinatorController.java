@@ -1,12 +1,11 @@
 package controller;
 
+import dao.CoordinatorDAO;
+import java.util.*;
 import model.Coordinator;
 import model.Evaluator;
-import model.Submission;
 import model.SessionAssignment;
-import dao.CoordinatorDAO;
-
-import java.util.*;
+import model.Submission;
 
 public class CoordinatorController {
     private Coordinator coordinator;

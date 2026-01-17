@@ -1,16 +1,13 @@
 package view.coordinator;
 
+import app.AppNavigator;
 import controller.CoordinatorController;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import model.Coordinator;
 import model.Evaluator;
 import model.Submission;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-
-import app.AppNavigator;
-
-import java.awt.*;
 
 public class SessionAssignmentDetails extends JFrame {
 
