@@ -12,6 +12,16 @@ public class Session {
 
     private List<Integer> studentIDs;
     private List<Integer> evaluatorIDs;
+  
+    private List<EvaluationResult> evaluationResults = new ArrayList<>();
+
+    public void addEvaluationResult(EvaluationResult er) {
+        evaluationResults.add(er);
+    }
+
+    public List<EvaluationResult> getEvaluationResults() {
+        return evaluationResults;
+    }   
 
     public Session(int sessionID, String venue, String sessionType, Date date,Time timeSlot) {
         this.sessionID = sessionID;
@@ -59,6 +69,50 @@ public class Session {
 
     public Time getTimeSlot() {
         return timeSlot;
+    }
+
+    public List<Integer> getStudentIDs() {
+        return studentIDs;
+    }
+
+    public List<Integer> getEvaluatorIDs() {
+        return evaluatorIDs;
+    }
+
+    // Returns all evaluation results for this session as a formatted string
+    public String getEvaluationSummary() {
+        if (evaluationResults.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (EvaluationResult er : evaluationResults) {
+            sb.append(er.getTotalScore())
+              .append(" - ")
+              .append(er.getComments())
+                .append("\n");
+        }
+
+        return sb.toString().trim();
+    }
+
+    // Returns student IDs as comma-separated string
+    public String getStudentIDsString() {
+        return String.join(", ",
+            studentIDs.stream()
+                    .map(String::valueOf)
+                    .toArray(String[]::new)
+        );
+    }
+
+    // Returns evaluator IDs as comma-separated string
+    public String getEvaluatorIDsString() {
+        return String.join(", ",
+            evaluatorIDs.stream()
+                        .map(String::valueOf)
+                        .toArray(String[]::new)
+        );
     }
 
     public void addStudent(int studentID) {
