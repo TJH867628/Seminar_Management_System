@@ -56,6 +56,11 @@ public class AppNavigator{
         new AddNewSeminarSession(coordinator);
     }
 
+    public static void openGenerateScheduleAndReport(JFrame frame, Coordinator coordinator){
+        frame.dispose();
+        new ScheduleForm(coordinator);
+    }
+
     public static void openEditSeminarSession(JFrame frame, Coordinator coordinator, int sessionID){
         frame.dispose();
         new EditSeminarSession(coordinator, sessionID);
