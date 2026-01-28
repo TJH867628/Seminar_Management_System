@@ -13,7 +13,9 @@ import java.sql.Time;
 
 public class AddNewSeminarSession extends JFrame {
     private static SeminarSessionDAO sao = new SeminarSessionDAO();
-
+    private JComboBox sessionTypeDropdown, venueDropdown;
+    private String[] sessionTypes = { "Type 1" , "Type 2", "Type 3" };
+    private String[] venues = { "Room A", "Room B", "Room C", "Room D" };
     public AddNewSeminarSession(Coordinator coordinator) {
 
         setTitle("Add New Seminar Session");
@@ -28,8 +30,8 @@ public class AddNewSeminarSession extends JFrame {
         JPanel form = new JPanel(new GridLayout(5, 2, 8, 8));
         form.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
 
-        JTextField txtVenue = new JTextField();
-        JTextField txtType = new JTextField();     
+        sessionTypeDropdown = new JComboBox<>(sessionTypes);
+        venueDropdown = new JComboBox<>(venues);
         SpinnerDateModel dateModel = new SpinnerDateModel();
         JSpinner dateSpinner = new JSpinner(dateModel);
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "yyyy-MM-dd"));
@@ -39,10 +41,10 @@ public class AddNewSeminarSession extends JFrame {
         timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, "HH:mm:ss"));
 
         form.add(new JLabel("Venue"));
-        form.add(txtVenue);
+        form.add(venueDropdown);
 
         form.add(new JLabel("Session Type"));
-        form.add(txtType);
+        form.add(sessionTypeDropdown);
 
         form.add(new JLabel("Date (YYYY-MM-DD)"));
         form.add(dateSpinner);
@@ -68,8 +70,8 @@ public class AddNewSeminarSession extends JFrame {
 
                 Session newSession = new Session(
                         0,
-                        txtVenue.getText(),
-                        txtType.getText(),
+                        venueDropdown.getSelectedItem().toString(),
+                        sessionTypeDropdown.getSelectedItem().toString(),
                         date,
                         time
                 );
