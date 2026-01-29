@@ -5,12 +5,5 @@ import view.login.LoginFrame;
 public class main {
     public static void main(String[] args) {
         new LoginFrame();
-        // User user = new User(2,
-        //     "evaluator@mail.com",
-        //     "Tan",
-        //     "Evaluator") {
-            
-        // };
-        // new ManageAccount(user);
     }
 } 

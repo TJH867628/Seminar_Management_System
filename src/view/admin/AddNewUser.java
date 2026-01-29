@@ -88,11 +88,11 @@ public class AddNewUser extends JFrame {
         add(dynamicPanel, BorderLayout.CENTER);
 
         JButton btnCreate = new JButton("Create User");
-        JButton btnCancel = new JButton("Cancel");
+        JButton btnBack = new JButton("Back");
 
         JPanel bottom = new JPanel();
         bottom.add(btnCreate);
-        bottom.add(btnCancel);
+        bottom.add(btnBack);
 
         add(bottom, BorderLayout.SOUTH);
 
@@ -100,7 +100,10 @@ public class AddNewUser extends JFrame {
 
         btnCreate.addActionListener(e -> handleCreate());
 
-        btnCancel.addActionListener(e -> dispose());
+        btnBack.addActionListener(e -> {
+            AppNavigator.openManageUser(this, admin);
+            dispose();
+        });
 
         switchRolePanel();
         setVisible(true);

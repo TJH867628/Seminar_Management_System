@@ -25,6 +25,8 @@ public class ManageUser extends JFrame {
     private JButton refreshBtn;
     private JButton backBtn;
 
+    private JComboBox<String> roleCombo;
+
     public ManageUser(Admin admin) {
 
         controller = new AdminController();
@@ -41,13 +43,24 @@ public class ManageUser extends JFrame {
             public boolean isCellEditable(int row, int column) {
                 if (!editMode) return false;
                 if (row != editingRow) return false;
-                return column != 0 && column != 3;
+                return column != 0; // allow edit except ID
             }
         };
 
         table = new JTable(model);
         table.setRowHeight(28);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        String[] roles = {"Student", "Evaluator", "Coordinator"};
+        roleCombo = new JComboBox<>(roles);
+        table.getColumnModel().getColumn(3)
+             .setCellEditor(new DefaultCellEditor(roleCombo));
+
+        roleCombo.addActionListener(e -> {
+            if (!editMode) {
+                roleCombo.hidePopup();
+            }
+        });
 
         loadUsers();
         add(new JScrollPane(table), BorderLayout.CENTER);
@@ -61,8 +74,9 @@ public class ManageUser extends JFrame {
 
         saveBtn.setEnabled(false);
         cancelBtn.setEnabled(false);
+
         addUserBtn.addActionListener(e -> {
-            AppNavigator.openAddNewUser(this,admin);
+            AppNavigator.openAddNewUser(this, admin);
         });
 
         editUserBtn.addActionListener(e -> startEdit());
@@ -110,7 +124,6 @@ public class ManageUser extends JFrame {
     private void saveEdit() {
         if (!editMode || editingRow == -1) return;
 
-
         if (table.isEditing()) {
             table.getCellEditor().stopCellEditing();
         }
@@ -119,8 +132,6 @@ public class ManageUser extends JFrame {
         String name = model.getValueAt(editingRow, 1).toString();
         String email = model.getValueAt(editingRow, 2).toString();
         String role = model.getValueAt(editingRow, 3).toString();
-
-
 
         if (!controller.updateUser(userID, name, email, role)) {
             DialogUtil.showErrorDialog(this, "Update Failed", "Failed to update user details.");

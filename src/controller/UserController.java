@@ -25,7 +25,6 @@ public class UserController {
         if(password == null || password.isEmpty()) return;
 
         String hashedPassword = PasswordUtil.hashPassword(password);
-        System.out.println("Hashed Password: " + hashedPassword); // Debugging line
         User user = UserDAO.validateUser(email, hashedPassword);
         if(user == null || user.getRole() == null || user.getRole().equals("invalid"))
         {
