@@ -1,45 +1,114 @@
 package service;
 
-import model.EvaluationResult;
 import model.Session;
+import model.EvaluationResult;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class ReportService {
 
-    //**Generates a TXT report for the given list of sessions.
-    public static void generateReport(List<Session> sessions) {
+    // Generate Excel report (2 sheets: Report Summary + Top 3 Students)
+    public static void generateExcelReport(List<Session> sessions, String folderName) {
+        try {
+            // Ensure folder exists
+            Files.createDirectories(Paths.get(folderName));
 
-        try (FileWriter fw = new FileWriter("seminar_schedule_report.txt")) {
+            Workbook workbook = new XSSFWorkbook();
 
-            fw.write("SEMINAR SCHEDULE REPORT\n");
-            fw.write("========================\n\n");
+            // Sheet 1: Report Summary
+            Sheet summarySheet = workbook.createSheet("Report Summary");
+            int rowNum = 0;
+            CellStyle borderStyle = workbook.createCellStyle();
+            borderStyle.setBorderBottom(BorderStyle.THIN);
+            borderStyle.setBorderTop(BorderStyle.THIN);
+            borderStyle.setBorderLeft(BorderStyle.THIN);
+            borderStyle.setBorderRight(BorderStyle.THIN);
 
             for (Session s : sessions) {
-                fw.write("Session ID: " + s.getSessionID() + "\n");
-                fw.write("Date: " + s.getDate() + "\n");
-                fw.write("Venue: " + s.getVenue() + "\n");
-                fw.write("Type: " + s.getSessionType() + "\n");
-                fw.write("Time Slot: " + (s.getTimeSlot() != null ? s.getTimeSlot() : "") + "\n");
-                fw.write("Submission IDs: " + s.getStudentIDsString() + "\n");
-                fw.write("Evaluator IDs: " + s.getEvaluatorIDsString() + "\n");
+                Row titleRow = summarySheet.createRow(rowNum++);
+                Cell titleCell = titleRow.createCell(0);
+                titleCell.setCellValue("Session " + s.getSessionID() + " - " + s.getSessionType() + " (" + s.getDate() + ")");
+                rowNum++;
 
-                fw.write("Scores & Comments:\n");
-                List<EvaluationResult> evals = s.getEvaluationResults();
-
-                if (evals.isEmpty()) {
-                    fw.write("No evaluations available.\n");
-                } else {
-                    for (EvaluationResult er : evals) {
-                        fw.write(er.getTotalScore() + " - " + er.getComments() + "\n");
-                    }
+                Row headerRow = summarySheet.createRow(rowNum++);
+                String[] headers = {"Submission ID", "Evaluator ID", "Total Score", "Comments"};
+                for (int i = 0; i < headers.length; i++) {
+                    Cell cell = headerRow.createCell(i);
+                    cell.setCellValue(headers[i]);
+                    cell.setCellStyle(borderStyle);
                 }
 
-                fw.write("------------------------------------------------------\n");
+                for (EvaluationResult er : s.getEvaluationResults()) {
+                    Row row = summarySheet.createRow(rowNum++);
+                    Cell cell0 = row.createCell(0);
+                    cell0.setCellValue(er.getSubmissionID());
+                    cell0.setCellStyle(borderStyle);
+
+                    Cell cell1 = row.createCell(1);
+                    cell1.setCellValue(er.getEvaluatorID());
+                    cell1.setCellStyle(borderStyle);
+
+                    Cell cell2 = row.createCell(2);
+                    cell2.setCellValue(er.getTotalScore());
+                    cell2.setCellStyle(borderStyle);
+
+                    Cell cell3 = row.createCell(3);
+                    cell3.setCellValue(er.getComments());
+                    cell3.setCellStyle(borderStyle);
+                }
+                rowNum += 2; // spacing between sessions
             }
 
+            // Sheet 2: Top 3 Students
+            Sheet top3Sheet = workbook.createSheet("Top 3 Students");
+            List<EvaluationResult> allResults = sessions.stream()
+                    .flatMap(s -> s.getEvaluationResults().stream())
+                    .sorted((a, b) -> b.getTotalScore() - a.getTotalScore())
+                    .limit(3)
+                    .toList();
+
+            Row headerRow = top3Sheet.createRow(0);
+            String[] headers = {"Submission ID", "Evaluator ID", "Total Score", "Comments"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(borderStyle);
+            }
+
+            int rowNumTop = 1;
+            for (EvaluationResult er : allResults) {
+                Row row = top3Sheet.createRow(rowNumTop++);
+                Cell cell0 = row.createCell(0);
+                cell0.setCellValue(er.getSubmissionID());
+                cell0.setCellStyle(borderStyle);
+
+                Cell cell1 = row.createCell(1);
+                cell1.setCellValue(er.getEvaluatorID());
+                cell1.setCellStyle(borderStyle);
+
+                Cell cell2 = row.createCell(2);
+                cell2.setCellValue(er.getTotalScore());
+                cell2.setCellStyle(borderStyle);
+
+                Cell cell3 = row.createCell(3);
+                cell3.setCellValue(er.getComments());
+                cell3.setCellStyle(borderStyle);
+            }
+
+            // Auto-size columns
+            for (Sheet sheet : List.of(summarySheet, top3Sheet)) {
+                for (int i = 0; i < 4; i++) sheet.autoSizeColumn(i);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(folderName + "/seminar_schedule_report.xlsx")) {
+                workbook.write(fos);
+            }
+            workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
