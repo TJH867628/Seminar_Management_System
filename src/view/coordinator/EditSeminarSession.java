@@ -61,7 +61,7 @@ public class EditSeminarSession extends JFrame {
 
         add(form, BorderLayout.CENTER);
 
-        JButton saveBtn = new JButton("Edit");
+        JButton saveBtn = new JButton("Save Edit");
         JButton backButton = new JButton("Back");
 
         JPanel bottom = new JPanel();
