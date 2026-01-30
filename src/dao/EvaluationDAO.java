@@ -48,11 +48,11 @@ public class EvaluationDAO {
         String insertSql =
             "INSERT INTO evaluation " +
             "(submissionID, evaluatorID, problemClarityScore, methodologyScore, resultScore, presentationScore, comments, totalScore, status) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PENDING')";
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')";
     
         String updateSql =
             "UPDATE evaluation SET " +
-            "problemClarityScore=?, methodologyScore=?, resultScore=?, presentationScore=?, comments=?, totalScore=?, status='PENDING' " +
+            "problemClarityScore=?, methodologyScore=?, resultScore=?, presentationScore=?, comments=?, totalScore=?, status='DRAFT' " +
             "WHERE submissionID=? AND evaluatorID=?";
     
         try (Connection conn = DBConnection.getConnection()) {

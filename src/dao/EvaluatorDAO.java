@@ -33,6 +33,7 @@ public class EvaluatorDAO {
         "  CASE " +
         "    WHEN eva.id IS NULL THEN 'PENDING' " +
         "    WHEN eva.status = 'COMPLETED' THEN 'COMPLETED' " +
+        "    WHEN eva.status = 'DRAFT' THEN 'DRAFT' " +
         "    ELSE 'PENDING' " +
         "  END AS status " +
         "FROM assigned_session asg " +
