@@ -9,7 +9,7 @@ public class CoordinatorDashboard extends JFrame {
 
     public CoordinatorDashboard(Coordinator coordinator) {
         setTitle("Coordinator Dashboard");
-        setSize(400, 300);
+        setSize(400, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

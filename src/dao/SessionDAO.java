@@ -157,9 +157,10 @@ public class SessionDAO {
         List<Session> sessions = getApprovedSessions(); // fetch all sessions
         generateSchedule(sessions);                     // assign time slots
 
-        for (Session s : sessions) {
-            loadEvaluationResults(s);                  // load scores and comments
-        }
+        // Removed duplicate loadEvaluationResults call
+        // for (Session s : sessions) {
+        //     loadEvaluationResults(s);                  
+        // }
 
         return sessions; 
     }

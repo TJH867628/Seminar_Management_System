@@ -8,16 +8,13 @@ import service.ReportService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
-
-// View schedule & report (shows schedule table), Generate TXT report, Analytics (Bar Chart + Pie Chart tabs),Report Summary button (Report Summary + Top 3 students)
- 
+// Seminar Schedule & Report dashboard
 public class ScheduleForm extends JFrame {
 
     private JTable scheduleTable;
@@ -49,15 +46,27 @@ public class ScheduleForm extends JFrame {
         scheduleTable = new JTable();
 
         btnViewSchedule = new JButton("View Schedule & Report");
-        btnGenerateReport = new JButton("Generate Report ( .TXT)");
+        btnGenerateReport = new JButton("Generate Report (Excel)");
         btnAnalytics = new JButton("Analytics");
         btnReportSummary = new JButton("Report Summary");
         btnBack = new JButton("Back");
 
-        // Button Actions 
+        // Button actions
         btnViewSchedule.addActionListener(e -> viewSchedule());
 
-        btnGenerateReport.addActionListener(e -> generateReport());
+        btnGenerateReport.addActionListener(e -> {
+            if (currentSessions == null || currentSessions.isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Please view the schedule first before generating the report.");
+                return;
+            }
+
+            // Generate Excel report only (Report folder)
+            ReportService.generateExcelReport(currentSessions, "Report");
+
+            JOptionPane.showMessageDialog(this,
+                    "Excel report generated successfully in folder 'Report'.");
+        });
 
         btnAnalytics.addActionListener(e -> {
             if (currentSessions == null || currentSessions.isEmpty()) {
@@ -65,7 +74,7 @@ public class ScheduleForm extends JFrame {
                         "Please view the schedule first before opening analytics.");
                 return;
             }
-            new AnalyticsChartsForm(currentSessions); // Bar Chart + Pie Chart only
+            new AnalyticsChartsForm(currentSessions);
         });
 
         btnReportSummary.addActionListener(e -> {
@@ -74,7 +83,7 @@ public class ScheduleForm extends JFrame {
                         "Please view the schedule first before opening report summary.");
                 return;
             }
-            new ReportSummaryForm(currentSessions); // Report Summary + Top 3 Students
+            new ReportSummaryForm(currentSessions);
         });
 
         btnBack.addActionListener(e -> {
@@ -95,11 +104,22 @@ public class ScheduleForm extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // View Schedule 
+    // View Schedule
     private void viewSchedule() {
         ScheduleController controller = new ScheduleController();
-        currentSessions = controller.generateScheduleAndReport();
 
+        List<Session> fetchedSessions = controller.generateScheduleAndReport();
+        if (fetchedSessions == null) fetchedSessions = List.of();
+
+        // Remove duplicates based on Session ID
+        Map<Integer, Session> uniqueSessions = new LinkedHashMap<>();
+        for (Session s : fetchedSessions) {
+            uniqueSessions.put(s.getSessionID(), s);
+        }
+
+        currentSessions = new ArrayList<>(uniqueSessions.values());
+
+        // Clear existing table
         DefaultTableModel model = new DefaultTableModel(
                 new String[]{
                         "Session ID", "Date", "Venue", "Type", "Time Slot",
@@ -137,7 +157,6 @@ public class ScheduleForm extends JFrame {
         }
 
         scheduleTable.setModel(model);
-
         scheduleTable.getColumnModel().getColumn(7)
                 .setCellRenderer(new MultilineCellRenderer());
 
@@ -148,23 +167,8 @@ public class ScheduleForm extends JFrame {
         }
     }
 
-    // Generate TXT Report 
-    private void generateReport() {
-        if (currentSessions == null || currentSessions.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Please view the schedule first before generating the report.");
-            return;
-        }
-
-        ReportService.generateReport(currentSessions);
-
-        JOptionPane.showMessageDialog(this,
-                "TXT report generated successfully: seminar_schedule_report.txt");
-    }
-
-    //  Multiline Cell Renderer 
+    // Multiline cell renderer for comments column
     static class MultilineCellRenderer extends JTextArea implements TableCellRenderer {
-
         public MultilineCellRenderer() {
             setLineWrap(true);
             setWrapStyleWord(true);
@@ -195,7 +199,7 @@ public class ScheduleForm extends JFrame {
         }
     }
 
-    //  Analytics Charts Form (Bar + Pie) 
+    // AnalyticsChartsForm
     public static class AnalyticsChartsForm extends JFrame {
         public AnalyticsChartsForm(List<Session> sessions) {
             setTitle("Analytics");
@@ -212,7 +216,7 @@ public class ScheduleForm extends JFrame {
         }
     }
 
-    //  Report Summary Form (Report Summary + Top 3 Students) 
+    // ReportSummaryForm
     public static class ReportSummaryForm extends JFrame {
         public ReportSummaryForm(List<Session> sessions) {
             setTitle("Report Summary");
