@@ -157,13 +157,12 @@ public class CreateSubmission extends JFrame {
         String presentationType = rbOral.isSelected() ? "Oral" : "Poster";
 
         Submission submission = new Submission(
-                0,
-                title,
-                filePath,
-                student.getStudentID(),
-                abs,
-                supervisor,
-                presentationType
+        txtTitle.getText().trim(),
+        txtFilePath.getText().trim(),
+        student.getStudentID(),
+        txtAbstract.getText().trim(),
+        txtSupervisor.getText().trim(),
+        rbOral.isSelected() ? "Oral" : "Poster"
         );
 
         boolean success = SubmissionDAO.createSubmission(submission);

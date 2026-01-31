@@ -1,5 +1,7 @@
 package model;
 
+import java.sql.Timestamp;
+
 public class Submission {
 
     private int submissionID;
@@ -10,10 +12,9 @@ public class Submission {
     private String supervisorName;
     private String presentationType;
     private String status;
+    private Timestamp createdDate;
 
-    // =========================
-    // FULL CONSTRUCTOR (NEW)
-    // =========================
+    // ✅ FULL constructor (USED BY DAO)
     public Submission(
             int submissionID,
             String researchTitle,
@@ -22,7 +23,8 @@ public class Submission {
             String abstracts,
             String supervisorName,
             String presentationType,
-            String status
+            String status,
+            Timestamp createdDate
     ) {
         this.submissionID = submissionID;
         this.researchTitle = researchTitle;
@@ -32,65 +34,30 @@ public class Submission {
         this.supervisorName = supervisorName;
         this.presentationType = presentationType;
         this.status = status;
+        this.createdDate = createdDate;
     }
 
-    // =========================
-    // BACKWARD-COMPAT CONSTRUCTOR
-    // (for old DAO/View code)
-    // =========================
+    //  LIGHT constructor (USED BY Create/Edit)
     public Submission(
-            int submissionID,
             String researchTitle,
             String filePath,
             int studentID,
             String abstracts,
             String supervisorName,
-            String status
+            String presentationType
     ) {
-        this(
-            submissionID,
-            researchTitle,
-            filePath,
-            studentID,
-            abstracts,
-            supervisorName,
-            "Oral",     // default type
-            status
-        );
+        this(0, researchTitle, filePath, studentID,
+             abstracts, supervisorName, presentationType,
+             "submitted", null);
     }
 
-    // =========================
-    // GETTERS
-    // =========================
-    public int getSubmissionID() {
-        return submissionID;
-    }
-
-    public String getResearchTitle() {
-        return researchTitle;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public int getStudentID() {
-        return studentID;
-    }
-
-    public String getAbstracts() {
-        return abstracts;
-    }
-
-    public String getSupervisorName() {
-        return supervisorName;
-    }
-
-    public String getPresentationType() {
-        return presentationType;
-    }
-
-    public String getStatus() {
-        return status;
-    }
+    public int getSubmissionID() { return submissionID; }
+    public String getResearchTitle() { return researchTitle; }
+    public String getFilePath() { return filePath; }
+    public int getStudentID() { return studentID; }
+    public String getAbstracts() { return abstracts; }
+    public String getSupervisorName() { return supervisorName; }
+    public String getPresentationType() { return presentationType; }
+    public String getStatus() { return status; }
+    public Timestamp getCreatedDate() { return createdDate; }
 }
