@@ -142,15 +142,19 @@ public class EditSubmission extends JFrame {
         }
 
         Submission updated = new Submission(
-                submission.getSubmissionID(),
-                txtTitle.getText().trim(),
-                txtFilePath.getText().trim(),
-                submission.getStudentID(),
-                txtAbstract.getText().trim(),
-                txtSupervisor.getText().trim(),
-                rbOral.isSelected() ? "Oral" : "Poster",
-                submission.getStatus()
-        );
+        submission.getSubmissionID(),
+        txtTitle.getText().trim(),
+        txtFilePath.getText().trim(),
+        submission.getStudentID(),
+        txtAbstract.getText().trim(),
+        txtSupervisor.getText().trim(),
+        rbOral.isSelected() ? "Oral" : "Poster",
+        submission.getStatus(),
+        submission.getCreatedDate()
+);
+
+SubmissionDAO.updateSubmission(updated);
+
 
         if (SubmissionDAO.updateSubmission(updated)) {
             JOptionPane.showMessageDialog(this,
