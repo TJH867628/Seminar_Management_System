@@ -163,4 +163,39 @@ public class EvaluationDAO {
             return false;
         }
     }
+
+    // ================= STUDENT VIEW (READ-ONLY) =================
+    public static Evaluation getFinalEvaluation(int submissionID) {
+
+        String sql = """
+            SELECT problemClarityScore, methodologyScore,
+                resultScore, presentationScore, comments
+            FROM evaluation
+            WHERE submissionID = ? AND status = 'COMPLETED'
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, submissionID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Evaluation(
+                    rs.getInt("problemClarityScore"),
+                    rs.getInt("methodologyScore"),
+                    rs.getInt("resultScore"),
+                    rs.getInt("presentationScore"),
+                    rs.getString("comments")
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 }

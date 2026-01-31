@@ -1,14 +1,15 @@
 package view.student;
 
 import app.AppNavigator;
+import dao.EvaluationDAO;
 import dao.SubmissionDAO;
-import model.Student;
-import model.Submission;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import model.Evaluation;
+import model.Student;
+import model.Submission;
 
 public class ManageSubmission extends JFrame {
 
@@ -52,10 +53,12 @@ public class ManageSubmission extends JFrame {
 
         JButton btnEdit = new JButton("View / Edit");
         JButton btnDelete = new JButton("Delete");
+        JButton btnResult = new JButton("View Result");
         JButton btnBack = new JButton("Back");
 
         btnEdit.addActionListener(e -> edit());
         btnDelete.addActionListener(e -> delete());
+        btnResult.addActionListener(e -> viewResult());
         btnBack.addActionListener(e -> {
             AppNavigator.openDashboard(student);
             dispose();
@@ -64,6 +67,7 @@ public class ManageSubmission extends JFrame {
         JPanel bottom = new JPanel();
         bottom.add(btnEdit);
         bottom.add(btnDelete);
+        bottom.add(btnResult);
         bottom.add(btnBack);
 
         add(bottom, BorderLayout.SOUTH);
@@ -87,6 +91,11 @@ public class ManageSubmission extends JFrame {
         }
     }
 
+    private boolean isEditable(Submission s) {
+        long diffMs = System.currentTimeMillis() - s.getCreatedDate().getTime();
+        return diffMs <= 86_400_000;
+    }
+
     private void edit() {
 
         int row = table.getSelectedRow();
@@ -95,19 +104,18 @@ public class ManageSubmission extends JFrame {
             return;
         }
 
-        String status = model.getValueAt(row, 4).toString();
+        int id = (int) model.getValueAt(row, 0);
+        Submission s = SubmissionDAO.getSubmissionById(id);
 
-        if (!status.equalsIgnoreCase("submitted")) {
+        if (!isEditable(s)) {
             JOptionPane.showMessageDialog(
                     this,
-                    "This submission can no longer be edited.",
-                    "Locked",
+                    "You can only edit a submission within 24 hours.",
+                    "Edit Locked",
                     JOptionPane.WARNING_MESSAGE
             );
             return;
         }
-
-        int id = (int) model.getValueAt(row, 0);
 
         new EditSubmission(student, id);
         dispose();
@@ -121,12 +129,14 @@ public class ManageSubmission extends JFrame {
             return;
         }
 
-        String status = model.getValueAt(row, 4).toString();
-        if (!status.equalsIgnoreCase("submitted")) {
+        int id = (int) model.getValueAt(row, 0);
+        Submission s = SubmissionDAO.getSubmissionById(id);
+
+        if (!isEditable(s)) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Cannot delete after evaluation starts.",
-                    "Blocked",
+                    "You can only delete a submission within 24 hours.",
+                    "Delete Locked",
                     JOptionPane.ERROR_MESSAGE
             );
             return;
@@ -141,12 +151,44 @@ public class ManageSubmission extends JFrame {
 
         if (confirm != JOptionPane.YES_OPTION) return;
 
-        int id = (int) model.getValueAt(row, 0);
-
         if (SubmissionDAO.deleteSubmission(id)) {
             loadData();
         } else {
             JOptionPane.showMessageDialog(this, "Delete failed.");
         }
+    }
+
+    private void viewResult() {
+
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Select a submission first.");
+            return;
+        }
+
+        int submissionID = (int) model.getValueAt(row, 0);
+        Evaluation eval = EvaluationDAO.getFinalEvaluation(submissionID);
+
+        if (eval == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Evaluation not available yet.",
+                    "Pending",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Problem Clarity: " + eval.getProblemClarity() +
+                "\nMethodology: " + eval.getMethodology() +
+                "\nResults: " + eval.getResults() +
+                "\nPresentation: " + eval.getPresentation() +
+                "\n\nTotal Score: " + eval.getTotalScore() +
+                "\n\nComments:\n" + eval.getComments(),
+                "Evaluation Result",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
 }

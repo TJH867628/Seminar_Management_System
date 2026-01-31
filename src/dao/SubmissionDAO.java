@@ -63,7 +63,8 @@ public class SubmissionDAO {
                         rs.getString("abstracts"),
                         rs.getString("supervisorName"),
                         rs.getString("presentationType"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getTimestamp("createdDate")
                 ));
             }
 
@@ -94,7 +95,8 @@ public class SubmissionDAO {
                         rs.getString("abstracts"),
                         rs.getString("supervisorName"),
                         rs.getString("presentationType"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getTimestamp("createdDate")
                 );
             }
 

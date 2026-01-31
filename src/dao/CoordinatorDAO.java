@@ -1,11 +1,10 @@
 package dao;
 
-import model.*;
-import util.DBConnection;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import model.*;
+import util.DBConnection;
 
 public class CoordinatorDAO {
     SeminarSessionDAO SeminarSessionDAO = new SeminarSessionDAO();
@@ -132,7 +131,8 @@ public class CoordinatorDAO {
                         rs.getString("abstracts"),
                         rs.getString("supervisorName"),
                         rs.getString("presentationType"),
-                        rs.getString("status")));
+                        rs.getString("status"),
+                        rs.getTimestamp("createdDate")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +160,8 @@ public class CoordinatorDAO {
                         rs.getString("abstracts"),
                         rs.getString("supervisorName"),
                         rs.getString("presentationType"),
-                        rs.getString("status")));
+                        rs.getString("status"),
+                        rs.getTimestamp("createdDate")));
             }
         } catch (Exception e) {
             e.printStackTrace();
