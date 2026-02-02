@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import javax.swing.table.DefaultTableModel;
+
 public class ReportService {
 
     // Generate Excel report (2 sheets: Report Summary + Top 3 Students)
@@ -173,5 +175,63 @@ public class ReportService {
             e.printStackTrace();
         }
     }
-}
 
+    public static void generateAwardAgendaReport(DefaultTableModel model, String folderName) throws Exception {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Award Agenda");
+
+        // Create styles
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerStyle.setFont(headerFont);
+        headerStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        headerStyle.setBorderTop(BorderStyle.THIN);
+        headerStyle.setBorderBottom(BorderStyle.THIN);
+        headerStyle.setBorderLeft(BorderStyle.THIN);
+        headerStyle.setBorderRight(BorderStyle.THIN);
+
+        CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        // Header row
+        Row header = sheet.createRow(0);
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            Cell cell = header.createCell(i);
+            cell.setCellValue(model.getColumnName(i));
+            cell.setCellStyle(headerStyle);
+        }
+
+        // Data rows
+        for (int r = 0; r < model.getRowCount(); r++) {
+            Row row = sheet.createRow(r + 1);
+            for (int c = 0; c < model.getColumnCount(); c++) {
+                Cell cell = row.createCell(c);
+                Object value = model.getValueAt(r, c);
+                cell.setCellValue(value != null ? value.toString() : "");
+                cell.setCellStyle(cellStyle);
+            }
+        }
+
+        // Auto-size columns
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Ensure folder exists
+        File dir = new File(folderName);
+        if (!dir.exists()) dir.mkdirs();
+
+        // Save file as award_agenda.xlsx
+        String filePath = folderName + "/award_agenda.xlsx";
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            workbook.write(fos);
+        }
+        workbook.close();
+    }
+}
