@@ -96,4 +96,91 @@ public class EvaluatorDAO {
         System.out.println("DAO returning list size = " + list.size());
         return list;
     }
+    // Fetch projects for "Students Projects Voting" with real Total Score
+    public List<AssignedEvaluation> getStudentProjectVotes(int evaluatorID) {
+        List<AssignedEvaluation> list = new ArrayList<>();
+        String sql = """
+            SELECT sub.id AS submissionID,
+                u.name AS studentName,
+                sub.sessionID,
+                ses.date,
+                ses.venue,
+                sub.filePath,
+                eva.totalScore,
+                CASE
+                    WHEN pcv.evaluatorID IS NOT NULL THEN 'VOTED'
+                    ELSE 'PENDING'
+                END AS status
+            FROM submissions sub
+            JOIN students stu ON stu.id = sub.studentID
+            JOIN users u ON stu.userID = u.id
+            JOIN sessions ses ON ses.id = sub.sessionID
+            LEFT JOIN peoples_choice_votes pcv 
+                ON pcv.submissionID = sub.id AND pcv.evaluatorID = ?
+            LEFT JOIN evaluation eva
+                ON eva.submissionID = sub.id
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, evaluatorID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int totalScore = rs.getObject("totalScore") != null ? rs.getInt("totalScore") : 0;
+
+                list.add(new AssignedEvaluation(
+                    rs.getString("studentName"),
+                    rs.getInt("sessionID"),
+                    rs.getDate("date").toString(),
+                    rs.getString("venue"),
+                    rs.getString("filePath"),
+                    rs.getInt("submissionID"),
+                    totalScore,
+                    rs.getString("status") // "VOTED" or "PENDING"
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Cast vote method (same as before)
+    public boolean castVote(int evaluatorID, int submissionID) {
+        String sql = "INSERT INTO peoples_choice_votes (evaluatorID, submissionID) VALUES (?, ?)";
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, evaluatorID);
+            ps.setInt(2, submissionID);
+            ps.executeUpdate();
+            return true;
+        } catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+            // Already voted
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // EvaluatorDAO.java
+    public boolean hasVoted(int evaluatorID, int submissionID) {
+        String sql = "SELECT COUNT(*) FROM peoples_choice_votes WHERE evaluatorID = ? AND submissionID = ?";
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, evaluatorID);
+            ps.setInt(2, submissionID);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // true if already voted
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
