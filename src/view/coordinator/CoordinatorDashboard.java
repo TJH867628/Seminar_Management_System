@@ -24,21 +24,26 @@ public class CoordinatorDashboard extends JFrame {
 
         JButton btnManageSeminarSession = new JButton("Manage Seminars Session");
         btnManageSeminarSession.addActionListener(e -> AppNavigator.openSeminarSessions(this, coordinator));
+
         JButton btnAssignES = new JButton("Assign Evaluators & Presenters");
         btnAssignES.addActionListener(e -> {
             AppNavigator.openManageSeminarSessionsAssignments(this, coordinator);
         });
-        
+
         JButton btnGenerateSchduleAndReport = new JButton("Generate Seminar Schedule & Report");
         btnGenerateSchduleAndReport.addActionListener(e -> {
-        AppNavigator.openGenerateScheduleAndReport(this, coordinator);
+            AppNavigator.openGenerateScheduleAndReport(this, coordinator);
         });
 
-        JButton btnManageAward = new JButton("Manage Awards");
+        JButton manageAwardBtn = new JButton("Manage Awards");
+        manageAwardBtn.addActionListener(e -> AppNavigator.openManageAwards(this, coordinator));
+
+
         JButton btnManageAccount = new JButton("Manage Account");
         btnManageAccount.addActionListener(e -> {
             AppNavigator.openManageAccount(this, coordinator);
         });
+
         JButton btnLogout = new JButton("Logout");
         btnLogout.addActionListener(e -> {
             AppNavigator.logout(this);
@@ -49,7 +54,7 @@ public class CoordinatorDashboard extends JFrame {
         panel.add(btnManageSeminarSession);
         panel.add(btnAssignES);
         panel.add(btnGenerateSchduleAndReport);
-        panel.add(btnManageAward);
+        panel.add(manageAwardBtn);
         panel.add(btnManageAccount);
         panel.add(btnLogout);
 
