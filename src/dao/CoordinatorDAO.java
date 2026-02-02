@@ -331,4 +331,87 @@ public class CoordinatorDAO {
             e.printStackTrace();
         }
     }
+
+        public List<Award> getAwardWinners() {
+    List<Award> list = new ArrayList<>();
+    String sql = """
+        SELECT * FROM (
+            SELECT 1 AS awardID,
+                   'Best Oral' AS awardName,
+                   'Oral Presentation' AS category,
+                   'Highest total score' AS criteria,
+                   sub.id AS submissionID,
+                   u.name AS studentName,
+                   sub.presentationType,
+                   eva.totalScore AS scoreOrVotes
+            FROM submissions sub
+            JOIN evaluation eva ON eva.submissionID = sub.id
+            JOIN students s ON s.id = sub.studentID
+            JOIN users u ON u.id = s.userID
+            WHERE sub.presentationType = 'Oral'
+            ORDER BY eva.totalScore DESC
+            LIMIT 1
+        ) AS oral
+
+        UNION ALL
+
+        SELECT * FROM (
+            SELECT 2 AS awardID,
+                   'Best Poster' AS awardName,
+                   'Poster Presentation' AS category,
+                   'Highest total score' AS criteria,
+                   sub.id AS submissionID,
+                   u.name AS studentName,
+                   sub.presentationType,
+                   eva.totalScore AS scoreOrVotes
+            FROM submissions sub
+            JOIN evaluation eva ON eva.submissionID = sub.id
+            JOIN students s ON s.id = sub.studentID
+            JOIN users u ON u.id = s.userID
+            WHERE sub.presentationType = 'Poster'
+            ORDER BY eva.totalScore DESC
+            LIMIT 1
+        ) AS poster
+
+        UNION ALL
+
+        SELECT * FROM (
+            SELECT 3 AS awardID,
+                   'People''s Choice' AS awardName,
+                   'All Presentations' AS category,
+                   'Most votes by evaluators' AS criteria,
+                   sub.id AS submissionID,
+                   u.name AS studentName,
+                   sub.presentationType,
+                   COUNT(pcv.voteID) AS scoreOrVotes
+            FROM submissions sub
+            JOIN students s ON s.id = sub.studentID
+            JOIN users u ON u.id = s.userID
+            LEFT JOIN peoples_choice_votes pcv ON pcv.submissionID = sub.id
+            GROUP BY sub.id
+            ORDER BY scoreOrVotes DESC
+            LIMIT 1
+        ) AS people_choice;
+        """;
+
+    try (Connection conn = DBConnection.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(new Award(
+                rs.getInt("awardID"),
+                rs.getString("awardName"),
+                rs.getString("category"),
+                rs.getString("criteria"),
+                rs.getInt("submissionID"),
+                rs.getString("studentName"),
+                rs.getString("presentationType"),
+                rs.getInt("scoreOrVotes")
+            ));
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
 }
