@@ -41,6 +41,11 @@ public class AppNavigator{
         new AssignedEvaluationsFrame(evaluator);
     }
 
+    public static void openStudentProjectVotes(JFrame parent, Evaluator evaluator) {
+    new StudentProjectVotesFrame(evaluator);
+    parent.dispose();
+    }
+
     public static void openEvaluationForm(JFrame frame, AssignedEvaluation assignedEvaluation, Evaluator evaluator){
         frame.dispose();
         new EvaluationForm(assignedEvaluation, evaluator);
@@ -64,6 +69,11 @@ public class AppNavigator{
     public static void openEditSeminarSession(JFrame frame, Coordinator coordinator, int sessionID){
         frame.dispose();
         new EditSeminarSession(coordinator, sessionID);
+    }
+
+    public static void openManageAwards(JFrame frame, Coordinator coordinator) {
+    frame.dispose(); // close the current dashboard if needed
+    new ManageAwardsFrame(coordinator); // open ManageAwardsFrame
     }
 
     public static void openManageUser(JFrame frame, Admin admin){
