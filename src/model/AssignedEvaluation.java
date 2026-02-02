@@ -23,38 +23,20 @@ public class AssignedEvaluation {
         this.status = status;
     }
 
-    public String getStudentName() {
-        return studentName;
-    }
+    // --- Getters ---
+    public String getStudentName() { return studentName; }
+    public int getSessionID() { return sessionID; }
+    public String getDate() { return date; }
+    public String getVenue() { return venue; }
+    public String getFilePath() { return filePath; }
+    public int getSubmissionID() { return submissionID; }
+    public int getTotalScore() { return totalScore; }
+    public String getStatus() { return status; } 
 
-    public int getSessionID() {
-        return sessionID;
-    }
+   
+    public void setStatus(String status) { this.status = status; }
 
-    public String getDate() {
-        return date;
-    }
-
-    public String getVenue() {
-        return venue;
-    }
-
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public int getSubmissionID() {
-        return submissionID;
-    }
-
-    public int getTotalScore() {
-        return totalScore;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-    
+    // --- Row for Assigned Evaluations Table ---
     public Object[] toRow() {
         return new Object[]{
             submissionID,
@@ -65,6 +47,21 @@ public class AssignedEvaluation {
             "Open File",
             totalScore > 0 ? totalScore : "No Mark",
             status
+        };
+    }
+
+    // --- Row for Student Projects Voting Table ---
+    public Object[] toRowForVoting() {
+        return new Object[]{
+            submissionID,
+            studentName,
+            sessionID,
+            date,
+            venue,
+            "Open File",     // File button
+            totalScore > 0 ? totalScore : "No Mark",  // optional display
+            status,          // shows vote status (VOTED or not)
+            "Vote"           // Vote button
         };
     }
 }
