@@ -9,7 +9,7 @@ import model.Evaluator;
 public class EvaluatorDashboard extends JFrame {
     public EvaluatorDashboard(Evaluator evaluator) {
         setTitle("Evaluator Dashboard");
-        setSize(400, 300);
+        setSize(400, 350);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -27,6 +27,14 @@ public class EvaluatorDashboard extends JFrame {
             AppNavigator.openAssignedEvaluations(this, evaluator);
         });
 
+        JButton btnStudentVotes = new JButton("Students Projects Voting");
+        btnStudentVotes.addActionListener(e -> {
+            // Open the voting frame
+            new StudentProjectVotesFrame(evaluator);
+            // Close current dashboard to prevent multiple windows
+            this.dispose();
+        });
+
         JButton btnManageAccount = new JButton("Manage Account");
         btnManageAccount.addActionListener(e -> {
             AppNavigator.openManageAccount(this, evaluator);
@@ -40,6 +48,7 @@ public class EvaluatorDashboard extends JFrame {
         JPanel panel = new JPanel(new GridLayout(4, 1, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
         panel.add(btnAssignEvaluations);
+        panel.add(btnStudentVotes);
         panel.add(btnManageAccount);
         panel.add(btnLogout);
 
