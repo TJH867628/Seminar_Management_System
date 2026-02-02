@@ -2,6 +2,8 @@ package controller;
 
 import dao.CoordinatorDAO;
 import java.util.*;
+
+import model.Award;
 import model.Coordinator;
 import model.Evaluator;
 import model.SessionAssignment;
@@ -49,5 +51,10 @@ public class CoordinatorController {
 
     public boolean removeSubmissionFromSession(int sessionId, int submissionId) {
         return dao.removeSubmissionFromSession(sessionId, submissionId);
+    }
+
+    public List<Award> getAwardWinners() {
+        CoordinatorDAO dao = new CoordinatorDAO();
+        return dao.getAwardWinners();
     }
 }
