@@ -61,11 +61,11 @@ public class ScheduleForm extends JFrame {
                 return;
             }
 
-            // Generate Excel report only (Report folder)
+            // Generate Excel report
             ReportService.generateExcelReport(currentSessions, "Report");
 
             JOptionPane.showMessageDialog(this,
-                    "Excel report generated successfully in folder 'Report'.");
+                    "Excel report generated successfully in folder 'Report' with Awards.");
         });
 
         btnAnalytics.addActionListener(e -> {
