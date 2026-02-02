@@ -276,13 +276,15 @@ public class AnalyticsForm {
     // Top 3 Students Panel 
     public static class Top3StudentsPanel extends JPanel {
         public Top3StudentsPanel(List<Session> sessions) {
-            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setLayout(new BorderLayout()); 
 
+            // Collect all results and take top 3
             List<EvaluationResult> allResults = new ArrayList<>();
             for (Session s : sessions) allResults.addAll(s.getEvaluationResults());
             allResults.sort(Comparator.comparing(EvaluationResult::getTotalScore).reversed());
             List<EvaluationResult> top3 = allResults.stream().limit(3).collect(Collectors.toList());
 
+            // Table for Top 3 students
             DefaultTableModel model = new DefaultTableModel(
                     new String[]{"Submission ID", "Evaluator ID", "Total Score", "Comments"}, 0
             );
@@ -297,7 +299,22 @@ public class AnalyticsForm {
 
             JTable table = new JTable(model);
             table.setFillsViewportHeight(true);
-            add(new JScrollPane(table));
+
+            // Put table in scroll pane
+            JScrollPane scrollPane = new JScrollPane(table);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            add(scrollPane, BorderLayout.CENTER);
+
+            // Red disclaimer
+            JLabel lblDisclaimer = new JLabel(
+                    "Note: The top 3 students are sorted by total score only. " +
+                    "The final award results, including People's Choice, are determined after evaluator nominations."
+            );
+            lblDisclaimer.setFont(new Font("Arial", Font.ITALIC, 12));
+            lblDisclaimer.setForeground(Color.RED);
+            lblDisclaimer.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+
+            add(lblDisclaimer, BorderLayout.SOUTH);
         }
     }
 }
