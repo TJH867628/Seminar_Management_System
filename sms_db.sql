@@ -177,4 +177,33 @@ CREATE TABLE evaluation (
   FOREIGN KEY (submissionID) REFERENCES submissions(id)
 ) ENGINE=InnoDB;
 
+-- =====================
+-- peoples_choice_votes
+-- =====================
+DROP TABLE IF EXISTS peoples_choice_votes;
+CREATE TABLE peoples_choice_votes (
+    voteID INT AUTO_INCREMENT PRIMARY KEY,
+    evaluatorID INT NOT NULL,
+    submissionID INT NOT NULL,
+    voteDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (evaluatorID),  -- only 1 vote per evaluator globally
+    FOREIGN KEY (evaluatorID) REFERENCES evaluators(id) ON DELETE CASCADE,
+    FOREIGN KEY (submissionID) REFERENCES submissions(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Create awards table
+DROP TABLE IF EXISTS awards;
+CREATE TABLE awards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    awardName VARCHAR(255) NOT NULL,
+    category VARCHAR(255) NOT NULL,
+    criteria VARCHAR(255)
+) ENGINE=InnoDB;
+
+-- Insert the 3 awards
+INSERT INTO awards (awardName, category, criteria) VALUES
+('Best Oral', 'Presentation', 'Highest total score from evaluator evaluations'),
+('Best Poster', 'Poster', 'Highest total score from evaluator evaluations'),
+('People''s Choice', 'Voting', 'Most votes from evaluators');
+
 SET FOREIGN_KEY_CHECKS = 1;
