@@ -415,30 +415,29 @@ public class CoordinatorDAO {
     return list;
 }
 
-// Fetch all awards for Award Agenda
-public List<Award> getAllAwards() {
-    List<Award> awards = new ArrayList<>();
-    String sql = "SELECT * FROM awards";
+    // Fetch all awards for Award Agenda
+    public List<Award> getAllAwards() {
+        List<Award> awards = new ArrayList<>();
+        String sql = "SELECT * FROM awards";
 
-    try (Connection conn = DBConnection.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBConnection.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
 
-        while (rs.next()) {  // Fixed typo 'wwhile' -> 'while'
-            // Use constructor since setters may not exist
-            Award award = new Award(
-                rs.getInt("id"),
-                rs.getString("awardName"),
-                rs.getString("category"),
-                rs.getString("criteria")
-            );
-            awards.add(award);
+            while (rs.next()) {
+                Award award = new Award(
+                    rs.getInt("id"),
+                    rs.getString("awardName"),
+                    rs.getString("category"),
+                    rs.getString("criteria")
+                );
+                awards.add(award);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+        return awards;
     }
-
-    return awards;
-}
 }
