@@ -5,6 +5,7 @@ import model.AssignedEvaluation;
 import model.Evaluator;
 import view.evaluator.EvaluationForm;
 import view.evaluator.EvaluatorDashboard;
+import view.evaluator.VotingForm;
 
 import javax.swing.*;
 import java.util.List;
@@ -40,7 +41,30 @@ public class EvaluatorController {
         new EvaluationForm(ae, evaluator);
     }
 
+    
+
     public void backToDashboard() {
         new EvaluatorDashboard(evaluator);
+    }
+
+    // Fetch projects for voting
+    public List<AssignedEvaluation> getStudentProjectVotes() {
+        return dao.getStudentProjectVotes(evaluator.getEvaluatorID());
+    }
+
+    // Open VotingForm
+    public void openVoteForm(JFrame parent, AssignedEvaluation project) {
+        new VotingForm(project, evaluator); // VotingForm already accepts AssignedEvaluation
+    }
+
+    // EvaluatorController.java
+    public boolean castVote(int submissionID) {
+        return dao.castVote(evaluator.getEvaluatorID(), submissionID);
+    }
+
+    // In EvaluatorController.java
+    // Check if evaluator has voted on a specific submission
+    public boolean hasVoted(int submissionID) {
+        return dao.hasVoted(evaluator.getEvaluatorID(), submissionID);
     }
 }
