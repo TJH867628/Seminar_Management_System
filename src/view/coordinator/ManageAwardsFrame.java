@@ -31,7 +31,7 @@ public class ManageAwardsFrame extends JFrame {
         lblTitle.setFont(new Font("Arial", Font.BOLD, 18));
         add(lblTitle, BorderLayout.NORTH);
 
-        // Table
+        // Table for Nomination Results
         String[] columns = {"Award ID", "Award Name", "Category", "Criteria",
                 "Submission ID", "Student Name", "Presentation Type", "Score/Votes"};
 
@@ -46,20 +46,16 @@ public class ManageAwardsFrame extends JFrame {
         table.setRowHeight(30);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // Bottom panel with Back and Refresh
+        // Bottom panel with buttons
         JPanel bottomPanel = new JPanel();
 
         JButton refreshBtn = new JButton("Refresh");
         refreshBtn.addActionListener(e -> loadAwardWinners());
 
         JButton generateReportBtn = new JButton("Generate Award Report (Excel)");
-        // No action yet
         generateReportBtn.addActionListener(e -> {
             try {
-                // Generate the report in "Report" folder
                 ReportService.generateAwardReport("Report");
-
-                // Show success message
                 JOptionPane.showMessageDialog(this,
                         "Award report generated successfully in the Report folder!",
                         "Success",
@@ -73,11 +69,16 @@ public class ManageAwardsFrame extends JFrame {
             }
         });
 
+        // View Award Agenda Button 
+        JButton viewAgendaBtn = new JButton("View Award Agenda");
+        viewAgendaBtn.addActionListener(e -> new AwardAgendaFrame(coordinator));
+
         JButton backBtn = new JButton("Back");
         backBtn.addActionListener(e -> backToDashboard());
 
         bottomPanel.add(refreshBtn);
         bottomPanel.add(generateReportBtn);
+        bottomPanel.add(viewAgendaBtn);
         bottomPanel.add(backBtn);
         add(bottomPanel, BorderLayout.SOUTH);
 
@@ -119,5 +120,83 @@ public class ManageAwardsFrame extends JFrame {
     private void backToDashboard() {
         dispose();
         new CoordinatorDashboard(coordinator);
+    }
+
+    public static class AwardAgendaFrame extends JFrame {
+
+        public AwardAgendaFrame(Coordinator coordinator) {
+            setTitle("Award Agenda");
+            setSize(900, 400);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
+
+            String[] columns = {"Time", "Activity", "Award/Category", "Presenter", "Venue"};
+            DefaultTableModel model = new DefaultTableModel(columns, 0);
+            JTable table = new JTable(model);
+            table.setRowHeight(30);
+
+            //  Opening Ceremony
+            model.addRow(new Object[]{"09:00", "Opening Ceremony", "-", "Coordinator", "Multipurpose Hall"});
+
+            //  Award Presentation (fetch dynamically)
+            try {
+                CoordinatorDAO dao = new CoordinatorDAO();
+                List<Award> awards = dao.getAllAwards(); // fetch all awards
+
+                int hour = 9, minute = 15;
+                for (Award award : awards) {
+                    String time = String.format("%02d:%02d", hour, minute);
+                    String awardCategory = award.getAwardName();
+                    model.addRow(new Object[]{time, "Award Presentation", awardCategory, "Coordinator", "Multipurpose Hall"});
+
+                    minute += 15;
+                    if (minute >= 60) {
+                        minute -= 60;
+                        hour += 1;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this,
+                        "Error loading awards: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+
+            //  Closing Ceremony
+            model.addRow(new Object[]{"10:00", "Closing Ceremony", "-", "Coordinator", "Multipurpose Hall"});
+
+            add(new JScrollPane(table), BorderLayout.CENTER);
+
+            // Bottom panel with Close + Generate Report button
+            JPanel bottomPanel = new JPanel();
+
+            JButton generateReportBtn = new JButton("Generate Award Agenda Report (Excel)");
+            generateReportBtn.addActionListener(e -> {
+                try {
+                    ReportService.generateAwardAgendaReport(model, "Report"); 
+                    JOptionPane.showMessageDialog(this,
+                            "Award agenda report generated successfully in the Report folder!",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this,
+                            "Error generating award agenda report: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            JButton closeBtn = new JButton("Close");
+            closeBtn.addActionListener(e -> dispose());
+
+            bottomPanel.add(generateReportBtn);
+            bottomPanel.add(closeBtn);
+
+            add(bottomPanel, BorderLayout.SOUTH);
+
+            setVisible(true);
+        }
     }
 }
