@@ -22,7 +22,17 @@ public class Award {
         this.scoreOrVotes = scoreOrVotes;
     }
 
-    // Getters
+    public Award(int awardID, String awardName, String category, String criteria) {
+        this.awardID = awardID;
+        this.awardName = awardName;
+        this.category = category;
+        this.criteria = criteria;
+        this.submissionID = 0;
+        this.studentName = "";
+        this.presentationType = "";
+        this.scoreOrVotes = 0;
+    }
+    
     public int getAwardID() { return awardID; }
     public String getAwardName() { return awardName; }
     public String getCategory() { return category; }
