@@ -1,21 +1,23 @@
 package dao;
 
-import model.Evaluation;
-import util.DBConnection;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import model.Evaluation;
+import util.DBConnection;
 
 public class EvaluationDAO {
+
+    // ---------- LOAD DRAFT ----------
     public Evaluation loadDraft(int submissionID, int evaluatorID) {
+
         String sql =
             "SELECT problemClarityScore, methodologyScore, resultScore, presentationScore, comments " +
             "FROM evaluation " +
             "WHERE submissionID = ? AND evaluatorID = ?";
 
         try (Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, submissionID);
             ps.setInt(2, evaluatorID);
@@ -39,33 +41,31 @@ public class EvaluationDAO {
         return null;
     }
 
-    // ---------- SAVE DRAFT (PENDING) ----------
+    // ---------- SAVE DRAFT (DRAFT) ----------
     public void saveDraft(Evaluation eval, int submissionID, int evaluatorID) {
 
         String checkSql =
             "SELECT id FROM evaluation WHERE submissionID = ? AND evaluatorID = ?";
-    
+
         String insertSql =
             "INSERT INTO evaluation " +
             "(submissionID, evaluatorID, problemClarityScore, methodologyScore, resultScore, presentationScore, comments, totalScore, status) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')";
-    
+
         String updateSql =
             "UPDATE evaluation SET " +
             "problemClarityScore=?, methodologyScore=?, resultScore=?, presentationScore=?, comments=?, totalScore=?, status='DRAFT' " +
             "WHERE submissionID=? AND evaluatorID=?";
-    
+
         try (Connection conn = DBConnection.getConnection()) {
-    
-            // 1️⃣ Check existence
+
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setInt(1, submissionID);
                 checkPs.setInt(2, evaluatorID);
-    
+
                 ResultSet rs = checkPs.executeQuery();
-    
+
                 if (rs.next()) {
-                    // 2️⃣ UPDATE
                     try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
                         ps.setInt(1, eval.getProblemClarity());
                         ps.setInt(2, eval.getMethodology());
@@ -78,7 +78,6 @@ public class EvaluationDAO {
                         ps.executeUpdate();
                     }
                 } else {
-                    // 3️⃣ INSERT
                     try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                         ps.setInt(1, submissionID);
                         ps.setInt(2, evaluatorID);
@@ -92,15 +91,15 @@ public class EvaluationDAO {
                     }
                 }
             }
-    
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     // ---------- SUBMIT FINAL (COMPLETED) ----------
-    public boolean saveEvaluation(Evaluation evaluation, int submissionID, int evaluatorID) 
-    {
+    public boolean saveEvaluation(Evaluation evaluation, int submissionID, int evaluatorID) {
+
         String checkSql =
             "SELECT id FROM evaluation WHERE submissionID = ? AND evaluatorID = ?";
 
@@ -122,15 +121,15 @@ public class EvaluationDAO {
 
         try (Connection conn = DBConnection.getConnection()) {
 
-            // 1️⃣ Check if draft exists
             try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
                 checkPs.setInt(1, submissionID);
                 checkPs.setInt(2, evaluatorID);
 
                 ResultSet rs = checkPs.executeQuery();
 
+                boolean success;
+
                 if (rs.next()) {
-                    // 2️⃣ UPDATE existing draft → COMPLETED
                     try (PreparedStatement ps = conn.prepareStatement(updateSql)) {
                         ps.setInt(1, evaluation.getProblemClarity());
                         ps.setInt(2, evaluation.getMethodology());
@@ -140,10 +139,9 @@ public class EvaluationDAO {
                         ps.setInt(6, evaluation.getTotalScore());
                         ps.setInt(7, submissionID);
                         ps.setInt(8, evaluatorID);
-                        return ps.executeUpdate() > 0;
+                        success = ps.executeUpdate() > 0;
                     }
                 } else {
-                    // 3️⃣ INSERT new completed evaluation
                     try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                         ps.setInt(1, submissionID);
                         ps.setInt(2, evaluatorID);
@@ -153,9 +151,19 @@ public class EvaluationDAO {
                         ps.setInt(6, evaluation.getPresentation());
                         ps.setString(7, evaluation.getComments());
                         ps.setInt(8, evaluation.getTotalScore());
-                        return ps.executeUpdate() > 0;
+                        success = ps.executeUpdate() > 0;
                     }
                 }
+
+                if (success) {
+                    try (PreparedStatement ps2 = conn.prepareStatement(
+                            "UPDATE submissions SET status = 'evaluated', updatedDate = NOW() WHERE id = ?")) {
+                        ps2.setInt(1, submissionID);
+                        ps2.executeUpdate();
+                    }
+                }
+
+                return success;
             }
 
         } catch (Exception e) {
@@ -167,15 +175,13 @@ public class EvaluationDAO {
     // ================= STUDENT VIEW (READ-ONLY) =================
     public static Evaluation getFinalEvaluation(int submissionID) {
 
-        String sql = """
-            SELECT problemClarityScore, methodologyScore,
-                resultScore, presentationScore, comments
-            FROM evaluation
-            WHERE submissionID = ? AND status = 'COMPLETED'
-        """;
+        String sql =
+            "SELECT problemClarityScore, methodologyScore, resultScore, presentationScore, comments " +
+            "FROM evaluation " +
+            "WHERE submissionID = ? AND status = 'COMPLETED'";
 
         try (Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, submissionID);
             ResultSet rs = ps.executeQuery();
@@ -196,6 +202,4 @@ public class EvaluationDAO {
 
         return null;
     }
-
-
 }
